@@ -1,0 +1,74 @@
+apps:
+  gunicorn:
+    user: openwebui
+    command: bin/service.gunicorn.sh
+    daemon: simple
+    plugs:
+    - network
+    - network-bind
+    restart-condition: always
+  consumer:
+    user: openwebui
+    command: bin/service.consumer.sh
+    daemon: simple
+    plugs:
+    - network
+    - network-bind
+    restart-condition: always
+  celery:
+    user: openwebui
+    command: bin/service.celery.sh
+    daemon: simple
+    plugs:
+    - network
+    - network-bind
+    restart-condition: always
+  celery-beat:
+    user: openwebui
+    command: bin/service.celery-beat.sh
+    daemon: simple
+    plugs:
+    - network
+    - network-bind
+    restart-condition: always
+  postgresql:
+    user: openwebui
+    command: bin/service.postgresql.sh
+    daemon: forking
+    plugs:
+      - network
+      - network-bind
+    restart-condition: always
+  redis:
+    user: openwebui
+    daemon: simple
+    command: bin/service.redis.sh
+    restart-condition: always
+    before: [celery]
+ 
+  psql:
+    command: bin/psql.sh
+
+  pgdumpall:
+    command: bin/pg_dumpall.sh
+
+  storage-change:
+    command: bin/cli storage-change
+
+  access-change:
+    command: bin/cli access-change
+
+  backup-pre-stop:
+    command: bin/cli backup-pre-stop
+
+  restore-pre-start:
+    command: bin/cli restore-pre-start
+
+  restore-post-start:
+    command: bin/cli restore-post-start
+
+confinement: strict
+description: openwebui
+grade: stable
+name: openwebui
+summary: openwebui
