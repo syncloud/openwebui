@@ -17,7 +17,7 @@ mkdir -p $SNAP
 ln -s ${BUILD_DIR} $SNAP/openwebui
 
 LD=$(echo $SNAP/openwebui/usr/lib/*/ld-*.so*)
-LIBS=$(echo echo $SNAP/openwebui/usr/lib/*linux*)
+LIBS=$(echo $SNAP/openwebui/usr/lib/*linux*)
 echo $LD
 PYTHON=${BUILD_DIR}/usr/local/bin/python3
 patchelf --set-interpreter $LD $PYTHON
