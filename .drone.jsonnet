@@ -1,9 +1,6 @@
 local name = 'openwebui';
 local browser = 'chrome';
-local version = '2.11.6';
-local postgresql = "15-bullseye";
-local redis = "7.0.15";
-local node = "18-bookworm-slim";
+local version = '0.7.2';
 local nginx = '1.29.3-alpine3.22';
 local debian = 'bookworm-slim';
 local platform = '25.09';
@@ -31,39 +28,10 @@ local build(arch, test_ui, dind) = [{
                  'echo $DRONE_BUILD_NUMBER > version',
                ],
              },
-             {
-                name: "redis",
-                image: "redis:" + redis,
-                commands: [
-                    "./redis/build.sh"
-                ]
-            },
-             {
-                name: "redis test",
-                image: 'syncloud/platform-' + distro_default + '-' + arch + ':' + platform,
-                commands: [
-                    "./redis/test.sh"
-                ]
-            },
-  {
-            name: "postgresql",
-            image: "postgres:" + postgresql,
-            commands: [
-                "./postgresql/build.sh"
-            ]
-           
-        },
-        {
-            name: "postgresql test",
-            image: 'syncloud/platform-' + distro_default + '-' + arch + ':' + platform,
-            commands: [
-                "./postgresql/test.sh"
-            ]
-        },
 
     {
       name: 'openwebui',
-      image: "ghcr.io/openwebui-ngx/openwebui-ngx:" + version,
+      image: "ghcr.io/open-webui/open-webui:" + version,
       commands: [
         './openwebui/build.sh',
       ],
