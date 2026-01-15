@@ -13,7 +13,7 @@ export PYTHONPATH="$BUILD_DIR/usr/local/lib/python3.11/site-packages:$BUILD_DIR/
 export LD_LIBRARY_PATH=$(echo $BUILD_DIR/usr/lib/*linux*/)
 
 apt update
-apt install binutils
+apt install -y binutils
 
 strings $BUILD_DIR/usr/local/lib/python3.11/lib-dynload/_ssl.cpython-311-*-linux-gnu.so  | grep PyMod
 
