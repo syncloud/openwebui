@@ -19,7 +19,11 @@ ln -s ${BUILD_DIR} $SNAP/openwebui
 LD=$(echo $SNAP/openwebui/usr/lib/*/ld-*.so*)
 LIBS=$(echo $SNAP/openwebui/usr/lib/*linux*)
 echo $LD
+echo $LIBS
+
 PYTHON=${BUILD_DIR}/usr/local/bin/python3
+ldd $PYTHON
+
 patchelf --set-interpreter $LD $PYTHON
 patchelf --set-rpath $LIBS $PYTHON
 $PYTHON --version
