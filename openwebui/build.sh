@@ -17,7 +17,7 @@ mkdir -p $SNAP
 ln -s ${BUILD_DIR} $SNAP/openwebui
 
 LD=$(echo $SNAP/openwebui/usr/lib/*/ld-*.so*)
-LIBS=$(echo $SNAP/openwebui/usr/lib/*linux*)
+LIBS=$(echo $SNAP/openwebui/usr/lib/*linux*/)
 echo $LD
 echo $LIBS
 
