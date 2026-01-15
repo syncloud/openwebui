@@ -9,5 +9,7 @@ mkdir -p $SNAP
 ln -s ${BUILD_DIR} $SNAP/openwebui
 ls -la $BUILD_DIR/usr/local/bin/python3
 $BUILD_DIR/usr/local/bin/python3 --version
-export PYTHONPATH="$BUILD_DIR/usr/local/lib/python3.11/site-packages"
+export PYTHONPATH="$BUILD_DIR/usr/local/lib/python3.11/site-packages:BUILD_DIR/usr/local/lib/python3.11/lib-dynload"
+
+$BUILD_DIR/usr/local/bin/python3 -c "import ssl"
 $BUILD_DIR/usr/local/bin/python3 -m uvicorn --version
