@@ -4,4 +4,4 @@ DIR=$( cd "$( dirname "$0" )" && pwd )
 cd ${DIR}
 
 BUILD_DIR=${DIR}/../build/snap/openwebui
-$BUILD_DIR/usr/local/bin/python --version
+$BUILD_DIR/usr/local/bin/python3 --version
