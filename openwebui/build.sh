@@ -8,6 +8,7 @@ cp -r /bin ${BUILD_DIR}
 cp -r /usr ${BUILD_DIR}
 cp -r /lib ${BUILD_DIR}
 cp -r /app ${BUILD_DIR}
+cp -r /bin/* ${BUILD_DIR}/bin/
 
 apt update
 apt install -y patchelf
@@ -20,6 +21,8 @@ LD=$(echo $SNAP/openwebui/usr/lib/*/ld-*.so*)
 LIBS=$(echo $SNAP/openwebui/usr/lib/*linux*/)
 echo $LD
 echo $LIBS
+
+${BUILD_DIR}/bin/python --version
 
 PYTHON=${BUILD_DIR}/usr/local/bin/python3
 ldd $PYTHON
