@@ -22,7 +22,11 @@ LIBS=$(echo $SNAP/openwebui/usr/lib/*linux*/)
 echo $LD
 echo $LIBS
 
-${BUILD_DIR}/bin/python --version
+strings /usr/local/lib/python3.11/lib-dynload/_ssl.cpython-311-*-linux-gnu.so  | grep PyMod
+
+$BUILD_DIR/bin/python --version
+$BUILD_DIR/bin/python -c "import ssl"
+$BUILD_DIR/bin/python -m uvicorn --version
 
 PYTHON=${BUILD_DIR}/usr/local/bin/python3
 ldd $PYTHON
