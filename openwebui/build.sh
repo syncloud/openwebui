@@ -11,7 +11,7 @@ cp -r /app ${BUILD_DIR}
 cp -r $DIR/bin/* ${BUILD_DIR}/bin/
 
 apt update
-apt install -y patchelf
+apt install -y patchelf strace
 
 SNAP=/snap/openwebui/current
 mkdir -p $SNAP
@@ -23,13 +23,13 @@ echo $LD
 echo $LIBS
 
 python --version
-python -c "import ssl"
+strace python -c "import ssl"
 python -m uvicorn --version
 
 strings /usr/local/lib/python3.11/lib-dynload/_ssl.cpython-311-*-linux-gnu.so  | grep PyMod
 
 $BUILD_DIR/bin/python --version
-$BUILD_DIR/bin/python -c "import ssl"
+strace $BUILD_DIR/bin/python -c "import ssl"
 $BUILD_DIR/bin/python -m uvicorn --version
 
 PYTHON=${BUILD_DIR}/usr/local/bin/python3
