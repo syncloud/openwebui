@@ -11,7 +11,7 @@ rm -rf /usr/local/lib/python3.11/site-packages/*.pth
 cp -r /usr ${BUILD_DIR}
 #cp -r /lib ${BUILD_DIR}
 cp -r /app ${BUILD_DIR}
-cp -r $DIR/bin/* ${BUILD_DIR}/bin/
+#cp -r $DIR/bin/* ${BUILD_DIR}/bin/
 #find ${BUILD_DIR} -name "*.pyc" -delete
 #find ${BUILD_DIR} -name "__pycache__" -exec rm -rf {} +
 
