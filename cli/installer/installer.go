@@ -1,22 +1,19 @@
 package installer
 
 import (
+	"fmt"
 	"github.com/google/uuid"
 	cp "github.com/otiai10/copy"
 	"github.com/syncloud/golib/config"
 	"github.com/syncloud/golib/linux"
 	"github.com/syncloud/golib/platform"
 	"go.uber.org/zap"
-
 	"os"
 	"path"
 )
 
 const (
-	App       = "openwebui"
-	AppDir    = "/snap/openwebui/current"
-	DataDir   = "/var/snap/openwebui/current"
-	CommonDir = "/var/snap/openwebui/common"
+	App = "openwebui"
 )
 
 type Variables struct {
@@ -38,20 +35,30 @@ type Installer struct {
 	platformClient     *platform.Client
 	installFile        string
 	executor           *Executor
+	appDir             string
+	dataDir            string
+	commonDir          string
 	logger             *zap.Logger
 }
 
 func New(logger *zap.Logger) *Installer {
-	configDir := path.Join(DataDir, "config")
+
+	appDir := fmt.Sprintf("/snap/%s/current", App)
+	dataDir := fmt.Sprintf("/var/snap/%s/current", App)
+	commonDir := fmt.Sprintf("/var/snap/%s/common", App)
+	configDir := path.Join(dataDir, "config")
 
 	executor := NewExecutor(logger)
 	return &Installer{
-		newVersionFile:     path.Join(AppDir, "version"),
-		currentVersionFile: path.Join(DataDir, "version"),
+		newVersionFile:     path.Join(appDir, "version"),
+		currentVersionFile: path.Join(dataDir, "version"),
 		configDir:          configDir,
 		platformClient:     platform.New(),
-		installFile:        path.Join(CommonDir, "installed"),
+		installFile:        path.Join(commonDir, "installed"),
 		executor:           executor,
+		appDir:             appDir,
+		dataDir:            dataDir,
+		commonDir:          commonDir,
 		logger:             logger,
 	}
 }
@@ -80,7 +87,7 @@ func (i *Installer) Configure() error {
 	}
 
 	err := linux.CreateMissingDirs(
-		path.Join(DataDir, "tmp"),
+		path.Join(i.dataDir, "tmp"),
 	)
 	if err != nil {
 		return err
@@ -205,7 +212,7 @@ func (i *Installer) UpdateConfigs() error {
 		return err
 	}
 
-	secret, err := getOrCreateUuid(path.Join(DataDir, "openwebui.secret"))
+	secret, err := getOrCreateUuid(path.Join(i.dataDir, "openwebui.secret"))
 	if err != nil {
 		return err
 	}
@@ -223,9 +230,9 @@ func (i *Installer) UpdateConfigs() error {
 	variables := Variables{
 		Domain:           domain,
 		Secret:           secret,
-		DataDir:          DataDir,
-		AppDir:           AppDir,
-		CommonDir:        CommonDir,
+		DataDir:          i.dataDir,
+		AppDir:           i.appDir,
+		CommonDir:        i.commonDir,
 		AppUrl:           url,
 		OidcClientId:     App,
 		OidcClientSecret: oidcSecret,
@@ -233,8 +240,8 @@ func (i *Installer) UpdateConfigs() error {
 	}
 
 	err = config.Generate(
-		path.Join(AppDir, "config"),
-		path.Join(DataDir, "config"),
+		path.Join(i.appDir, "config"),
+		path.Join(i.dataDir, "config"),
 		variables,
 	)
 	if err != nil {
@@ -256,11 +263,11 @@ func (i *Installer) FixPermissions() error {
 		return err
 	}
 
-	err = linux.Chown(DataDir, App)
+	err = linux.Chown(i.dataDir, App)
 	if err != nil {
 		return err
 	}
-	err = linux.Chown(CommonDir, App)
+	err = linux.Chown(i.commonDir, App)
 	if err != nil {
 		return err
 	}
