@@ -1,7 +1,6 @@
 package installer
 
 import (
-	"fmt"
 	"github.com/google/uuid"
 	cp "github.com/otiai10/copy"
 	"github.com/syncloud/golib/config"
@@ -21,12 +20,15 @@ const (
 )
 
 type Variables struct {
-	Domain    string
-	Secret    string
-	DataDir   string
-	AppDir    string
-	CommonDir string
-	Url       string
+	Domain           string
+	Secret           string
+	DataDir          string
+	AppDir           string
+	CommonDir        string
+	AppUrl           string
+	OidcClientId     string
+	OidcClientSecret string
+	AuthUrl          string
 }
 
 type Installer struct {
@@ -80,11 +82,6 @@ func (i *Installer) Configure() error {
 	err := linux.CreateMissingDirs(
 		path.Join(DataDir, "tmp"),
 	)
-	if err != nil {
-		return err
-	}
-
-	err = i.executor.Run(fmt.Sprint(AppDir, "/bin/configure.sh"))
 	if err != nil {
 		return err
 	}
@@ -213,13 +210,26 @@ func (i *Installer) UpdateConfigs() error {
 		return err
 	}
 
+	authUrl, err := i.platformClient.GetAppUrl("auth")
+	if err != nil {
+		return err
+	}
+
+	oidcSecret, err := i.platformClient.RegisterOIDCClient(App, "/oauth/oidc/callback/", false, "client_secret_basic")
+	if err != nil {
+		return err
+	}
+
 	variables := Variables{
-		Domain:    domain,
-		Secret:    secret,
-		DataDir:   DataDir,
-		AppDir:    AppDir,
-		CommonDir: CommonDir,
-		Url:       url,
+		Domain:           domain,
+		Secret:           secret,
+		DataDir:          DataDir,
+		AppDir:           AppDir,
+		CommonDir:        CommonDir,
+		AppUrl:           url,
+		OidcClientId:     App,
+		OidcClientSecret: oidcSecret,
+		AuthUrl:          authUrl,
 	}
 
 	err = config.Generate(

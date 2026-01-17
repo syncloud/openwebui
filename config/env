@@ -1,2 +1,0 @@
-export PSQL_PORT=5432
-export PSQL_DATABASE={{ .DataDir }}/database
