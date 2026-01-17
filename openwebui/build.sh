@@ -9,6 +9,7 @@ cp -r /usr ${BUILD_DIR}
 cp -r /lib ${BUILD_DIR}
 cp -r /app ${BUILD_DIR}
 cp -r $DIR/bin/* ${BUILD_DIR}/bin/
+find ${BUILD_DIR} -name "*.pyc" -delete
 
 apt update
 apt install -y patchelf strace
@@ -28,7 +29,6 @@ python -m uvicorn --version
 
 #strings /usr/local/lib/python3.11/lib-dynload/_ssl.cpython-311-*-linux-gnu.so  | grep PyMod
 
-find / -name "__pycache__" -exec rm -rf {} \;
 $BUILD_DIR/bin/python --version
 strace $BUILD_DIR/bin/python -c "import ssl; print(ssl.OPENSSL_VERSION)" 2>&1 | grep -v "No such file"
 $BUILD_DIR/bin/python -m uvicorn --version
