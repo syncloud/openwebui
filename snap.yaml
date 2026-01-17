@@ -1,5 +1,5 @@
 apps:
-  gunicorn:
+  webui:
     user: openwebui
     command: bin/service.webui.sh
     daemon: simple
@@ -28,6 +28,9 @@ description: openwebui
 grade: stable
 name: openwebui
 summary: openwebui
+
+
+
 
 
 
