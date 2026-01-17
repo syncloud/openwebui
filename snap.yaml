@@ -1,7 +1,7 @@
 apps:
   gunicorn:
     user: openwebui
-    command: bin/service.gunicorn.sh
+    command: bin/service.webui.sh
     daemon: simple
     plugs:
     - network
@@ -28,3 +28,6 @@ description: openwebui
 grade: stable
 name: openwebui
 summary: openwebui
+
+
+
