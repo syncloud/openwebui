@@ -33,15 +33,17 @@ strace python -c "import ssl; print(ssl.OPENSSL_VERSION)" 2>&1 | grep -v "No suc
 #$BUILD_DIR/bin/python --version
 find / -name "*.pyc" -delete
 find / -name "__pycache__" -exec rm -rf {} +
-strace $BUILD_DIR/bin/python -c "import ssl; print(ssl.OPENSSL_VERSION)" 2>&1 | grep -v "No such file"
+#strace $BUILD_DIR/bin/python -c "import ssl; print(ssl.OPENSSL_VERSION)" 2>&1 | grep -v "No such file"
 #$BUILD_DIR/bin/python -m uvicorn --version
 
 PYTHON=${BUILD_DIR}/usr/local/bin/python3
 ldd $PYTHON
 LD=$(echo $SNAP/openwebui/usr/lib/*/ld-*.so*)
 LIBS=$(echo $SNAP/openwebui/usr/lib/*linux*/)
+LIBS=$LIBS:$SNAP/openwebui/usr/local/lib
 echo $LD
 echo $LIBS
 patchelf --set-interpreter $LD $PYTHON
 patchelf --set-rpath $LIBS $PYTHON
-$PYTHON --version
+#$PYTHON --version
+$PYTHON -c "import ssl; print(ssl.OPENSSL_VERSION)" 2>&1 | grep -v "No such file"
