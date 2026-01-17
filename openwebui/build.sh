@@ -26,7 +26,7 @@ python --version
 strace python -c "import ssl" 2>&1 | grep -v "No such file"
 python -m uvicorn --version
 
-strings /usr/local/lib/python3.11/lib-dynload/_ssl.cpython-311-*-linux-gnu.so  | grep PyMod
+#strings /usr/local/lib/python3.11/lib-dynload/_ssl.cpython-311-*-linux-gnu.so  | grep PyMod
 
 $BUILD_DIR/bin/python --version
 strace $BUILD_DIR/bin/python -c "import ssl" 2>&1 | grep openat | grep "\.so"
