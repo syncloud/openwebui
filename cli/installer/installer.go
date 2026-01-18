@@ -215,7 +215,7 @@ func (i *Installer) UpdateConfigs() error {
 		return err
 	}
 
-	oidcSecret, err := i.platformClient.RegisterOIDCClient(App, "/oauth/oidc/callback/", false, "client_secret_basic")
+	oidcSecret, err := i.platformClient.RegisterOIDCClient(App, "/oauth/oidc/callback", false, "client_secret_basic")
 	if err != nil {
 		return err
 	}
@@ -298,3 +298,4 @@ func getOrCreateUuid(file string) (string, error) {
 	}
 	return string(content), nil
 }
+
