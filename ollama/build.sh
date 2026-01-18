@@ -15,13 +15,13 @@ SNAP=/snap/openwebui/current
 mkdir -p $SNAP
 ln -s $BUILD_DIR $SNAP/ollama
 
-ldd $BUILD_DIR/ollama/bin/ollama
+ldd $BUILD_DIR/bin/ollama
 
 LD=$(echo $SNAP/ollama/usr/lib/*/ld-*.so*)
-LIBS=$LIBS:$(echo $SNAP/openwebui/usr/lib/*linux*/)
+LIBS=$LIBS:$(echo $SNAP/ollama/usr/lib/*linux*/)
 
 echo $LD
 echo $LIBS
-patchelf --set-interpreter $LD $BUILD_DIR/ollama/bin/ollama
-patchelf --set-rpath $LIBS $BUILD_DIR/ollama/bin/ollama
-$BUILD_DIR/ollama/bin/ollama --version
+patchelf --set-interpreter $LD $BUILD_DIR/bin/ollama
+patchelf --set-rpath $LIBS $BUILD_DIR/bin/ollama
+$BUILD_DIR/bin/ollama --version
