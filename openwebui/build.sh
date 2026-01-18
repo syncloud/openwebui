@@ -29,6 +29,10 @@ echo $LD
 echo $LIBS
 patchelf --set-interpreter $LD $PYTHON
 patchelf --set-rpath $LIBS $PYTHON
+
+patchelf --set-interpreter $LD ${BUILD_DIR}/usr/bin/ffmpeg
+patchelf --set-rpath $LIBS ${BUILD_DIR}/usr/bin/ffmpeg
+
 $PYTHON --version
 $PYTHON -c "import ssl; print(ssl.OPENSSL_VERSION)"
 $PYTHON -m uvicorn --version
