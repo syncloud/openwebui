@@ -1,5 +1,7 @@
 #!/bin/bash -e
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )
-LIBS=${DIR}/usr/lib
-LIBS=$LIBS:${DIR}/usr/lib/pulseaudio
-exec ${DIR}/lib/ld-*.so* --library-path $LIBS ${DIR}/usr/bin/ffplay "$@"
+LIBS=$(echo $DIR/usr/lib/*linux*/)
+LIBS=$LIBS:$(echo $DIR/usr/lib/*linux*/pulseaudio)
+LIBS=$LIBS:$(echo $DIR/usr/lib/*linux*/blas)
+LIBS=$LIBS:$(echo $DIR/usr/lib/*linux*/lapack)
+exec ${DIR}/usr/lib/*/ld-*.so* --library-path $LIBS ${DIR}/usr/bin/ffplay "$@"
