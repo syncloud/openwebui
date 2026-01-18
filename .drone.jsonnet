@@ -33,7 +33,7 @@ local build(arch, test_ui, dind) = [{
       name: 'ollama',
       image: "ollama/ollama:" + ollama,
       commands: [
-        './olama/build.sh',
+        './ollama/build.sh',
       ],
     },
     {
