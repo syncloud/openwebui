@@ -7,6 +7,15 @@ apps:
     - network
     - network-bind
     restart-condition: always
+
+  ollama:
+    user: openwebui
+    command: bin/service.ollama.sh
+    daemon: simple
+    plugs:
+    - network
+    - network-bind
+    restart-condition: always
   
   storage-change:
     command: bin/cli storage-change

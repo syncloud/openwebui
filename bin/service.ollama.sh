@@ -2,10 +2,10 @@
 
 DIR=$( cd "$( dirname "$0" )" && cd .. && pwd )
 
-export PATH=$DIR/openwebui/bin:$PATH
-cd $DIR/openwebui/app/backend
-source $SNAP_DATA/config/openwebui.env
-exec $DIR/openwebui/usr/local/bin/python3 \
+cd $DIR/ollama
+source $SNAP_DATA/config/ollama.env
+exec $DIR/ollama/bin/ollama serve
+bui/usr/local/bin/python3 \
     -m uvicorn open_webui.main:app \
     --uds $SNAP_COMMON/web.socket \
     --forwarded-allow-ips '*' \
