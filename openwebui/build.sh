@@ -5,9 +5,9 @@ cd ${DIR}
 BUILD_DIR=${DIR}/../build/snap/openwebui
 mkdir -p ${BUILD_DIR}
 
-rm -rf /usr/local/lib/python3.11/site-packages/*.pth
-
+#rm -rf /usr/local/lib/python3.11/site-packages/*.pth
 cp -r /usr ${BUILD_DIR}
+rm -rf /app/build
 cp -r /app ${BUILD_DIR}
 
 apt update
