@@ -7,15 +7,18 @@ mkdir -p ${BUILD_DIR}
 
 #rm -rf /usr/local/lib/python3.11/site-packages/*.pth
 cp -r /usr ${BUILD_DIR}
-rm -rf /app/build
 cp -r /app ${BUILD_DIR}
 
 apt update
 apt install -y patchelf
 
 SNAP=/snap/openwebui/current
+SNAP_DATA=/var$SNAP
 mkdir -p $SNAP
-ln -s ${BUILD_DIR} $SNAP/openwebui
+mkdir -p $SNAP_DATA
+ln -s $BUILD_DIR $SNAP/openwebui
+rm -rf $BUILD_DIR/backend/static
+ln -s $SNAP_DATA/static $BUILD_DIR/backend/static
 
 PYTHON=${BUILD_DIR}/usr/local/bin/python3
 ldd $PYTHON

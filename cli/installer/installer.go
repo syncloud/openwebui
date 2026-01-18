@@ -86,14 +86,7 @@ func (i *Installer) Configure() error {
 		}
 	}
 
-	err := linux.CreateMissingDirs(
-		path.Join(i.dataDir, "tmp"),
-	)
-	if err != nil {
-		return err
-	}
-
-	err = i.FixPermissions()
+	err := i.FixPermissions()
 	if err != nil {
 		return err
 	}
@@ -169,12 +162,7 @@ func (i *Installer) StorageChange() error {
 	if err != nil {
 		return err
 	}
-	err = linux.CreateMissingDirs(
-		path.Join(storageDir, "data/log"),
-	)
-	if err != nil {
-		return err
-	}
+
 	err = linux.Chown(storageDir, App)
 	if err != nil {
 		return err
@@ -196,7 +184,12 @@ func (i *Installer) UpdateConfigs() error {
 	if err != nil {
 		return err
 	}
-
+	err = linux.CreateMissingDirs(
+		path.Join(i.dataDir, "static"),
+	)
+	if err != nil {
+		return err
+	}
 	err = i.StorageChange()
 	if err != nil {
 		return err
