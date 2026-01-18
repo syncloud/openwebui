@@ -22,7 +22,7 @@ ln -s $SNAP_DATA/static $BUILD_DIR/app/backend/open_webui/static
 PYTHON=${BUILD_DIR}/usr/local/bin/python3
 ldd $PYTHON
 LD=$(echo $SNAP/openwebui/usr/lib/*/ld-*.so*)
-LIBS=$LIBS:$SNAP/openwebui/usr/local/lib
+LIBS=$SNAP/openwebui/usr/local/lib
 LIBS=$LIBS:$(echo $SNAP/openwebui/usr/lib/*linux*/)
 
 echo $LD
@@ -30,6 +30,7 @@ echo $LIBS
 patchelf --set-interpreter $LD $PYTHON
 patchelf --set-rpath $LIBS $PYTHON
 
+LIBS=$(echo $SNAP/openwebui/usr/lib/*linux*/)
 patchelf --set-interpreter $LD ${BUILD_DIR}/usr/bin/ffmpeg
 patchelf --set-rpath $LIBS ${BUILD_DIR}/usr/bin/ffmpeg
 
