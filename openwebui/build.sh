@@ -17,8 +17,8 @@ SNAP_DATA=/var$SNAP
 mkdir -p $SNAP
 mkdir -p $SNAP_DATA
 ln -s $BUILD_DIR $SNAP/openwebui
-rm -rf $BUILD_DIR/backend/static
-ln -s $SNAP_DATA/static $BUILD_DIR/backend/static
+rm -rf $BUILD_DIR/app/backend/static
+ln -s $SNAP_DATA/static $BUILD_DIR/app/backend/static
 
 PYTHON=${BUILD_DIR}/usr/local/bin/python3
 ldd $PYTHON
