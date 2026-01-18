@@ -31,8 +31,8 @@ patchelf --set-interpreter $LD $PYTHON
 patchelf --set-rpath $LIBS $PYTHON
 
 LIBS=$(echo $SNAP/openwebui/usr/lib/*linux*/)
-patchelf --set-interpreter $LD ${BUILD_DIR}/usr/bin/ffmpeg
-patchelf --set-rpath $LIBS ${BUILD_DIR}/usr/bin/ffmpeg
+#patchelf --set-interpreter $LD ${BUILD_DIR}/usr/bin/ffmpeg
+#patchelf --set-rpath $LIBS ${BUILD_DIR}/usr/bin/ffmpeg
 
 $PYTHON --version
 $PYTHON -c "import ssl; print(ssl.OPENSSL_VERSION)"

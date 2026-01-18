@@ -1,5 +1,6 @@
 #!/bin/bash -e
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )
-LIBS=${DIR}/usr/lib
-LIBS=$LIBS:${DIR}/usr/lib/pulseaudio
-exec ${DIR}/lib/ld-*.so* --library-path $LIBS ${DIR}/usr/bin/ffmpeg "$@"
+LIBS=$(echo $DIR/usr/lib/*linux*/)
+LIBS=$LIBS:$(echo $SNAP/openwebui/usr/lib/*linux*/pulseaudio)
+exec ${DIR}/usr/lib/*/ld-*.so* --library-path $LIBS ${DIR}/usr/bin/ffmpeg "$@"
+
