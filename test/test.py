@@ -42,7 +42,7 @@ def module_setup(request, device, app_dir, artifact_dir):
 
         app_log_dir = join(artifact_dir, 'log')
         os.mkdir(app_log_dir)
-        device.scp_from_device('/var/snap/openwebui/common/log/*.log', app_log_dir)
+   
         device.scp_from_device('{0}/*'.format(TMP_DIR), app_log_dir)
         check_output('chmod -R a+r {0}'.format(artifact_dir), shell=True)
 
@@ -138,4 +138,3 @@ def retry(method, retries=10):
             time.sleep(5)
         attempt += 1
     raise exception
-
