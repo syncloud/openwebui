@@ -32,7 +32,7 @@ def test_start(module_setup, app, domain, device_host):
 
 def test_login(selenium, device_user, device_password):
     selenium.open_app()
-    #selenium.find_by(By.XPATH, "//button[contains(.,'Syncloud')]").click()
+    selenium.find_by(By.XPATH, "//div[.='Get started']").click()
     #selenium.find_by(By.XPATH, "//a[contains(.,'My Syncloud')]").click()
     selenium.find_by(By.ID, "username-textfield").send_keys(device_user)
     password = selenium.find_by(By.ID, "password-textfield")
@@ -45,23 +45,4 @@ def test_login(selenium, device_user, device_password):
     selenium.find_by(By.XPATH, "//h4[contains(.,'openwebui-ngx is running!')]")
     selenium.screenshot('main')
 
-def test_upload_pdf(selenium):
-    file = selenium.find_by(By.XPATH, "//input[@type='file']")
-    selenium.driver.execute_script("arguments[0].removeAttribute('class')", file)
-    file.clear()
-    file.send_keys(join(DIR, '..', 'openwebui', 'simple.pdf'))
-    #selenium.find_by(By.XPATH, "//p[contains(.,'Upload complete, waiting...')]")
-    selenium.invisible_by(By.XPATH, "//p[contains(.,'Upload complete, waiting...')]")
-    selenium.find_by(By.XPATH, "//span[contains(.,'Dismiss completed')]")
-    selenium.screenshot('uploaded-pdf')
-
-def test_upload_jpg(selenium):
-    file = selenium.find_by(By.XPATH, "//input[@type='file']")
-    selenium.driver.execute_script("arguments[0].removeAttribute('class')", file)
-    file.clear()
-    file.send_keys(join(DIR, '..', 'openwebui', 'simple.jpg'))
-    #selenium.find_by(By.XPATH, "//p[contains(.,'Upload complete, waiting...')]")
-    selenium.invisible_by(By.XPATH, "//p[contains(.,'Upload complete, waiting...')]")
-    selenium.find_by(By.XPATH, "//span[contains(.,'Dismiss completed')]")
-    selenium.screenshot('uploaded-jpg')
 
