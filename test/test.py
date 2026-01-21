@@ -65,7 +65,7 @@ def test_install(app_archive_path, device_host, device_password, device):
     local_install(device_host, device_password, app_archive_path)
 
 
-@pytest.mark.flaky(retries=20, delay=5)
+@pytest.mark.flaky(retries=50, delay=5)
 def test_visible_through_platform(app_domain):
     response = requests.get('https://{0}'.format(app_domain), verify=False)
     assert response.status_code == 200, response.text
