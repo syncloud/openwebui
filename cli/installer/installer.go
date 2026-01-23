@@ -163,6 +163,13 @@ func (i *Installer) StorageChange() error {
 		return err
 	}
 
+	err = linux.CreateMissingDirs(
+		path.Join(storageDir, "ollama", "models"),
+	)
+	if err != nil {
+		return err
+	}
+
 	err = linux.Chown(storageDir, App)
 	if err != nil {
 		return err
@@ -298,4 +305,3 @@ func getOrCreateUuid(file string) (string, error) {
 	}
 	return string(content), nil
 }
-
