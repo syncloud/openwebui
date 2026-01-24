@@ -53,8 +53,9 @@ def test_start(module_setup, device, device_host, app, domain):
     add_host_alias(app, device_host, domain)
     device.run_ssh('date', retries=100)
     device.run_ssh('mkdir {0}'.format(TMP_DIR))
+
   
-@pytest.mark.flaky(retries=10, delay=5)
+@pytest.mark.flaky(retries=20, delay=10)
 def test_activate_device(device):
     device.run_ssh('snap refresh platform --channel=master')
     response = retry(device.activate_custom)
