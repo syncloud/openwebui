@@ -33,7 +33,7 @@ def test_start(module_setup, app, domain, device_host):
 def test_login(selenium, device_user, device_password):
     selenium.open_app()
     selenium.find_by(By.XPATH, "//div[.='Get started']/../button").click()
-    #selenium.find_by(By.XPATH, "//a[contains(.,'My Syncloud')]").click()
+    selenium.find_by(By.XPATH, "//span[.='Continue with Authelia']").click()
     selenium.find_by(By.ID, "username-textfield").send_keys(device_user)
     password = selenium.find_by(By.ID, "password-textfield")
     password.send_keys(device_password)
