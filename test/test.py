@@ -63,6 +63,7 @@ def test_activate_device(device):
     
 
 def test_install(app_archive_path, device_host, device_password, device):
+    device.run_ssh('touch /var/snap/platform/current/CI_TEST')
     local_install(device_host, device_password, app_archive_path)
 
 

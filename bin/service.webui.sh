@@ -2,7 +2,9 @@
 
 DIR=$( cd "$( dirname "$0" )" && cd .. && pwd )
 
-export REQUESTS_CA_BUNDLE=/var/snap/platform/current/syncloud.ca.crt
+if [[ -f /var/snap/platform/current/CI_TEST ]]; then
+  export HTTPX_VERIFY=false
+fi
 export PATH=$DIR/openwebui/bin:$PATH
 cd $DIR/openwebui/app/backend
 source $SNAP_DATA/config/openwebui.env
