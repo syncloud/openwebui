@@ -3,13 +3,13 @@ from os.path import dirname, join
 from selenium import webdriver
 from syncloudlib.integration.selenium_wrapper import SeleniumWrapper
 
-from test.ui import test_publish_video, test_login
+from test.ui import test_login
 
 DIR = dirname(__file__)
 
 
 def test_chrome():
-    # sudo docker run -d --name chrome --network ip6net -p 4444:4444 -p 5900:5900 -p 7900:7900 --shm-size="2g" selenium/standalone-chrome:4.21.0-20240517
+    # sudo docker run -d --name chrome --network ip6net -p 4444:4444 -p 5900:5900 -p 7900:7900 --shm-size="2g" selenium/standalone-chrome:4.35.0-20250828
     # firefox http://localhost:7900
     # password: secret
 
@@ -31,7 +31,6 @@ def test_chrome():
 
     try:
         test_login(selenium, "test", "test1234")
-        test_publish_video(selenium)
     finally:
         print()
         selenium.log()
