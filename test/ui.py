@@ -17,7 +17,7 @@ def module_setup(request, device, artifact_dir, ui_mode, driver, selenium):
         device.activated()
         device.run_ssh('mkdir -p {0}'.format(TMP_DIR), throw=False)
         device.run_ssh('journalctl > {0}/journalctl.ui.{1}.log'.format(TMP_DIR, ui_mode), throw=False)
-        device.run_ssh('cat /var/snap/platform/current/config/authelia/config.yml > {0}/authelia.config.ui.log'.format(TMP_DIR), throw=False)
+        device.run_ssh('ls -lah /data/openwebui/ollama > {0}/data.ollama.ls.log'.format(TMP_DIR), throw=False)
         device.scp_from_device('{0}/*'.format(TMP_DIR), join(artifact_dir, 'log'))
         check_output('cp /videos/* {0}'.format(artifact_dir), shell=True)
         check_output('chmod -R a+r {0}'.format(artifact_dir), shell=True)
@@ -44,5 +44,4 @@ def test_login(selenium, device_user, device_password):
     selenium.find_by(By.XPATH, "//button[contains(.,'Sign up')]").click()
     selenium.find_by(By.XPATH, "//h4[contains(.,'openwebui-ngx is running!')]")
     selenium.screenshot('main')
-
 
