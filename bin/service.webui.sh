@@ -2,6 +2,9 @@
 
 DIR=$( cd "$( dirname "$0" )" && cd .. && pwd )
 
+export SSL_CERT_FILE=""
+export REQUESTS_CA_BUNDLE=""
+export CURL_CA_BUNDLE=""
 export OPENSSL_VERIFY=0
 export HTTPX_VERIFY=false
 #export SSL_CERT_FILE=/var/snap/platform/current/syncloud.ca.crt
