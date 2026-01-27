@@ -7,6 +7,7 @@ DIR=$( cd "$( dirname "$0" )" && cd .. && pwd )
 #export CURL_CA_BUNDLE=""
 #export OPENSSL_VERIFY=0
 #export HTTPX_VERIFY=false
+export SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
 #export SSL_CERT_FILE=/var/snap/platform/current/syncloud.ca.crt
 #export REQUESTS_CA_BUNDLE=/var/snap/platform/current/syncloud.ca.crt
 export PATH=$DIR/openwebui/bin:$PATH
