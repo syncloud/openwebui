@@ -65,7 +65,8 @@ def test_activate_device(device):
 def test_ca_cert(device, app_domain):
     device.run_ssh('cp /var/snap/platform/current/syncloud.ca.crt /usr/local/share/ca-certificates')
     device.run_ssh('update-ca-certificates 2>&1 > {0}/update-ca-certificates.log'.format(TMP_DIR))
-    device.run_ssh('curl -v https://{0} 2>&1 > {1}/ssl.ca.log'.format(app_domain, TMP_DIR))
+    device.run_ssh('curl -v https://{0} 2>&1 > {1}/curl.app.log'.format(app_domain, TMP_DIR))
+    device.run_ssh('curl -v https://auth.{0} 2>&1 > {1}/curl.auth.log'.format(domain, TMP_DIR))
     
 
 def test_install(app_archive_path, device_host, device_password, device):
