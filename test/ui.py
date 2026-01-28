@@ -42,5 +42,5 @@ def test_login(selenium, device_user, device_password):
     selenium.find_by(By.ID, "sign-in-button").click()
     selenium.find_by(By.ID, "accept-button").click()
     selenium.find_by(By.XPATH, "//button[contains(.,'Okay')]").click()
-    selenium.find_by(By.XPATH, "//h4[contains(.,'openwebui-ngx is running!')]")
+    selenium.find_by(By.XPATH, "//div[contains(.,'Hello, user')]")
     selenium.screenshot('main')
