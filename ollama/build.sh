@@ -8,7 +8,7 @@ mkdir -p ${BUILD_DIR}
 cp -r /usr $BUILD_DIR
 cp -r /bin $BUILD_DIR
 
-rm -rf $BUILD_DIR/usr/lib/ollama/*cuda*
+#rm -rf $BUILD_DIR/usr/lib/ollama/*cuda*
 
 apt update
 apt install -y patchelf
