@@ -10,6 +10,7 @@ cp -r /app ${BUILD_DIR}
 cp -r $DIR/bin ${BUILD_DIR}
 
 rm -rf ${BUILD_DIR}/usr/lib/gcc
+rm -rf ${BUILD_DIR}/usr/local/lib/python3.11/site-packages/playwright
 
 apt update
 apt install -y patchelf
