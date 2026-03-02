@@ -12,8 +12,7 @@ cp -r $DIR/bin ${BUILD_DIR}
 rm -rf ${BUILD_DIR}/usr/lib/gcc
 rm -rf ${BUILD_DIR}/usr/local/lib/python3.11/site-packages/playwright
 
-apt update
-apt install -y patchelf
+cp -r /lib ${BUILD_DIR}
 
 SNAP=/snap/openwebui/current
 SNAP_DATA=/var$SNAP
@@ -23,21 +22,7 @@ ln -s $BUILD_DIR $SNAP/openwebui
 rm -rf $BUILD_DIR/app/backend/open_webui/static
 ln -s $SNAP_DATA/static $BUILD_DIR/app/backend/open_webui/static
 
-PYTHON=${BUILD_DIR}/usr/local/bin/python3
-ldd $PYTHON
-LD=$(echo $SNAP/openwebui/usr/lib/*/ld-*.so*)
-LIBS=$SNAP/openwebui/usr/local/lib
-LIBS=$LIBS:$(echo $SNAP/openwebui/usr/lib/*linux*/)
-
-echo $LD
-echo $LIBS
-patchelf --set-interpreter $LD $PYTHON
-patchelf --set-rpath $LIBS $PYTHON
-
-LIBS=$(echo $SNAP/openwebui/usr/lib/*linux*/)
-#patchelf --set-interpreter $LD ${BUILD_DIR}/usr/bin/ffmpeg
-#patchelf --set-rpath $LIBS ${BUILD_DIR}/usr/bin/ffmpeg
-
+PYTHON=${BUILD_DIR}/bin/python
 $PYTHON --version
 $PYTHON -c "import ssl; print(ssl.OPENSSL_VERSION)"
 $PYTHON -m uvicorn --version
