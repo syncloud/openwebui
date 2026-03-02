@@ -60,6 +60,13 @@ local build(arch, test_ui, dind) = [{
         './openwebui/test.sh',
       ],
     },
+    {
+      name: 'openwebui test buster',
+      image: 'syncloud/platform-buster-' + arch + ':' + platforms.buster,
+      commands: [
+        './openwebui/test.sh',
+      ],
+    },
     
              {
                name: 'cli',
