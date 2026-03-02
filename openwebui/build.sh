@@ -12,8 +12,6 @@ cp -r $DIR/bin ${BUILD_DIR}
 rm -rf ${BUILD_DIR}/usr/lib/gcc
 rm -rf ${BUILD_DIR}/usr/local/lib/python3.11/site-packages/playwright
 
-cp -r /lib ${BUILD_DIR}
-
 SNAP=/snap/openwebui/current
 SNAP_DATA=/var$SNAP
 mkdir -p $SNAP
