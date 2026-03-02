@@ -4,13 +4,16 @@ local openwebui = '0.7.2';
 local ollama = '0.14.2';
 local nginx = '1.29.3-alpine3.22';
 local debian = 'bookworm-slim';
-local platform = '25.09';
+local platforms = {
+  bookworm: '25.09',
+  buster: '25.02',
+};
 local selenium = '4.35.0-20250828';
 local deployer = 'https://github.com/syncloud/store/releases/download/4/syncloud-release';
 local python = '3.12-slim-bookworm';
 local go = '1.25';
 local distro_default = 'bookworm';
-local distros = ['bookworm'];
+local distros = ['bookworm', 'buster'];
 
 
 local build(arch, test_ui, dind) = [{
@@ -38,7 +41,14 @@ local build(arch, test_ui, dind) = [{
     },
     {
       name: 'ollama test',
-      image: 'syncloud/platform-' + distro_default + '-' + arch + ':' + platform,
+      image: 'syncloud/platform-' + distro_default + '-' + arch + ':' + platforms[distro_default],
+      commands: [
+        './ollama/test.sh',
+      ],
+    },
+    {
+      name: 'ollama test buster',
+      image: 'syncloud/platform-buster-' + arch + ':' + platforms.buster,
       commands: [
         './ollama/test.sh',
       ],
@@ -52,7 +62,14 @@ local build(arch, test_ui, dind) = [{
     },
     {
       name: 'openwebui test',
-      image: 'syncloud/platform-' + distro_default + '-' + arch + ':' + platform,
+      image: 'syncloud/platform-' + distro_default + '-' + arch + ':' + platforms[distro_default],
+      commands: [
+        './openwebui/test.sh',
+      ],
+    },
+    {
+      name: 'openwebui test buster',
+      image: 'syncloud/platform-buster-' + arch + ':' + platforms.buster,
       commands: [
         './openwebui/test.sh',
       ],
@@ -89,7 +106,7 @@ local build(arch, test_ui, dind) = [{
                ],
              }
              for distro in distros
-           ] + (if test_ui then (
+           ] + (if test_ui then 
                   [
                     {
                       name: 'selenium',
@@ -145,10 +162,6 @@ local build(arch, test_ui, dind) = [{
                         path: '/videos',
                       }],
                     },
-                  ]
-                )
-                else []) +
-           (if arch == 'amd64' then [
               {
                 name: 'test-upgrade',
                 image: 'python:' + python,
@@ -259,7 +272,7 @@ local build(arch, test_ui, dind) = [{
     ] + [
       {
         name: name + '.' + distro + '.com',
-        image: 'syncloud/platform-' + distro + '-' + arch + ':' + platform,
+        image: 'syncloud/platform-' + distro + '-' + arch + ':' + platforms[distro],
         privileged: true,
         volumes: [
           {

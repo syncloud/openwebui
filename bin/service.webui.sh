@@ -10,7 +10,7 @@ fi
 export PATH=$DIR/openwebui/bin:$PATH
 cd $DIR/openwebui/app/backend
 source $SNAP_DATA/config/openwebui.env
-exec $DIR/openwebui/usr/local/bin/python3 \
+exec $DIR/openwebui/bin/python \
     -m uvicorn open_webui.main:app \
     --uds $SNAP_COMMON/web.socket \
     --forwarded-allow-ips '*' \
