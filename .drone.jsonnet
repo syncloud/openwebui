@@ -47,6 +47,13 @@ local build(arch, test_ui, dind) = [{
       ],
     },
     {
+      name: 'ollama test buster',
+      image: 'syncloud/platform-buster-' + arch + ':' + platforms.buster,
+      commands: [
+        './ollama/test.sh',
+      ],
+    },
+    {
       name: 'openwebui',
       image: "ghcr.io/open-webui/open-webui:" + openwebui,
       commands: [
