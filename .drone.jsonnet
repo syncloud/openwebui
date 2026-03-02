@@ -10,7 +10,7 @@ local deployer = 'https://github.com/syncloud/store/releases/download/4/syncloud
 local python = '3.12-slim-bookworm';
 local go = '1.25';
 local distro_default = 'bookworm';
-local distros = ['bookworm'];
+local distros = ['bookworm', 'buster'];
 
 
 local build(arch, test_ui, dind) = [{
@@ -89,7 +89,7 @@ local build(arch, test_ui, dind) = [{
                ],
              }
              for distro in distros
-           ] + (if test_ui then (
+           ] + (if test_ui then 
                   [
                     {
                       name: 'selenium',
@@ -145,10 +145,6 @@ local build(arch, test_ui, dind) = [{
                         path: '/videos',
                       }],
                     },
-                  ]
-                )
-                else []) +
-           (if arch == 'amd64' then [
               {
                 name: 'test-upgrade',
                 image: 'python:' + python,
@@ -298,6 +294,13 @@ local build(arch, test_ui, dind) = [{
       {
         name: 'dockersock',
         temp: {},
+      },
+    ],
+  },
+];
+
+build('amd64', true, '20.10.21-dind') +
+build('arm64', false, '20.10.21-dind')
       },
     ],
   },
