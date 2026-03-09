@@ -49,7 +49,8 @@ def test_login(selenium, device_user, device_password):
 def test_upload_epub(selenium, device_user, device_password):
     file_input = selenium.find_by(By.XPATH, "//input[@type='file']")
     file_input.send_keys(join(DIR, 'data', 'test.epub'))
-    time.sleep(3)
+    # Wait for upload to complete - look for the file name appearing as a document tag
+    selenium.find_by(By.XPATH, "//*[contains(text(),'test.epub')]")
     selenium.screenshot('epub-upload')
     # Verify no error about pandoc
     page_source = selenium.driver.page_source
