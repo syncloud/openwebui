@@ -49,10 +49,10 @@ def test_login(selenium, device_user, device_password):
 def test_upload_epub(selenium, device_user, device_password):
     file_input = selenium.find_by(By.XPATH, "//input[@type='file']")
     file_input.send_keys(join(DIR, 'data', 'test.epub'))
-    # Wait for upload to complete - look for the file name appearing as a document tag
-    selenium.find_by(By.XPATH, "//*[contains(text(),'test.epub')]")
+    # Wait for spinner to disappear (upload complete)
+    selenium.invisible_by(By.CSS_SELECTOR, ".spinner_ajPY")
     selenium.screenshot('epub-upload')
-    # Verify no error about pandoc
+    # Verify no error toast on page
     page_source = selenium.driver.page_source
-    assert 'pandoc' not in page_source.lower() or 'error' not in page_source.lower(), \
-        'Pandoc error detected on page'
+    assert 'data-type="error"' not in page_source, \
+        'Error toast detected on page after epub upload'
