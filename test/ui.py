@@ -52,7 +52,9 @@ def test_upload_epub(selenium, device_user, device_password):
     # Wait for spinner to disappear (upload complete)
     selenium.invisible_by(By.CSS_SELECTOR, ".spinner_ajPY")
     selenium.screenshot('epub-upload')
-    # Verify no error toast on page
+    # Verify no error or warning toast on page
     page_source = selenium.driver.page_source
     assert 'data-type="error"' not in page_source, \
         'Error toast detected on page after epub upload'
+    assert 'data-type="warning"' not in page_source, \
+        'Warning toast detected on page after epub upload'

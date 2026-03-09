@@ -1,4 +1,5 @@
 #!/bin/bash -e
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )
 LIBS=$(echo $DIR/usr/lib/*linux*/)
+export PANDOC_DATA_DIR=${DIR}/usr/share/pandoc/data
 exec ${DIR}/usr/lib/*/ld-*.so* --library-path $LIBS ${DIR}/usr/bin/pandoc "$@"
