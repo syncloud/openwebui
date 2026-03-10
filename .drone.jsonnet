@@ -1,6 +1,6 @@
 local name = 'openwebui';
 local browser = 'chrome';
-local openwebui = '0.7.2';
+local openwebui = '0.8.10';
 local ollama = '0.14.2';
 local nginx = '1.29.3-alpine3.22';
 local debian = 'bookworm-slim';

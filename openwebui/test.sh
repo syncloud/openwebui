@@ -16,3 +16,4 @@ $PYTHON -m uvicorn --version
 $BUILD_DIR/bin/ffmpeg --help
 $BUILD_DIR/bin/ffplay --help
 $BUILD_DIR/bin/ffprobe --help
+$BUILD_DIR/bin/pandoc --version

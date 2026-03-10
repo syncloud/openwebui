@@ -28,6 +28,16 @@ CI is Drone CI (JS SPA). Check builds via API:
 curl -s "http://ci.syncloud.org:8080/api/repos/syncloud/openwebui/builds?limit=5"
 ```
 
+Each build contains multiple pipelines (one per arch: amd64, arm64, etc). To check status, look inside `stages` for each pipeline:
+```
+curl -s "http://ci.syncloud.org:8080/api/repos/syncloud/openwebui/builds/{N}" | python3 -c "
+import json,sys
+b=json.load(sys.stdin)
+for s in b.get('stages',[]):
+    print(f\"{s['name']}: {s['status']}\")
+"
+```
+
 ## CI Artifacts
 
 Artifacts are served at `http://ci.syncloud.org:8081` (returns JSON directory listings).
