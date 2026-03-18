@@ -5,7 +5,7 @@ local ollama = '0.14.2';
 local nginx = '1.29.3-alpine3.22';
 local debian = 'bookworm-slim';
 local platforms = {
-  bookworm: '25.09',
+  bookworm: '26.03',
   buster: '25.02',
 };
 local selenium = '4.35.0-20250828';

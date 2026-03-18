@@ -57,7 +57,6 @@ def test_start(module_setup, device, device_host, app, domain):
   
 @pytest.mark.flaky(retries=50, delay=10)
 def test_activate_device(device):
-    device.run_ssh('snap refresh platform --channel=master')
     response = retry(device.activate_custom)
     assert response.status_code == 200, response.text
 
