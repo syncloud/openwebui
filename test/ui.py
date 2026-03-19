@@ -40,7 +40,7 @@ def test_login(selenium, device_user, device_password):
     selenium.screenshot('login')
     #password.send_keys(Keys.RETURN)
     selenium.find_by(By.ID, "sign-in-button").click()
-    selenium.find_by(By.ID, "accept-button").click()
+    selenium.find_by(By.ID, "openid-consent-accept").click()
     selenium.find_by(By.XPATH, "//button[contains(.,'Okay')]").click()
     selenium.find_by(By.XPATH, "//div[contains(.,'Hello, user')]")
     selenium.screenshot('main')
