@@ -62,14 +62,9 @@ Directory structure:
       journalctl.log          # full journal from integration test teardown
       ps.log, netstat.log     # process/network state at teardown
     platform/                 # platform logs
-    desktop/                  # UI test artifacts (amd64 only)
-      journalctl.log
-      screenshot/
-        {test-name}.png
-        {test-name}.html.log
-      log/
+    desktop/                  # UI test artifacts (amd64 only) — Playwright report/test-results
+    mobile/                   # UI test artifacts for mobile project
     refresh.journalctl.log    # full journal from upgrade test (pre/post-refresh)
-    video.mkv                 # selenium recording
 ```
 
 Download a file directly:
@@ -80,14 +75,16 @@ curl -O "http://ci.syncloud.org:8081/files/openwebui/282-amd64/bookworm/desktop/
 
 # Running Drone builds locally
 
+The `drone` CLI is not on $PATH. It lives at `../drone-cli/drone` (sibling project). Either prefix calls with that path, or add a shell alias.
+
 Generate `.drone.yml` from jsonnet (run from project root):
 ```
-drone jsonnet --stdout --stream > .drone.yml
+../drone-cli/drone jsonnet --stdout --stream > .drone.yml
 ```
 
 Run a specific pipeline with selected steps (e.g. amd64 up to `test bookworm`):
 ```
-drone exec --pipeline amd64 --trusted \
+../drone-cli/drone exec --pipeline amd64 --trusted \
   --include version \
   --include ollama \
   --include "ollama test" \

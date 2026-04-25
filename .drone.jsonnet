@@ -1,6 +1,5 @@
 local name = 'openwebui';
-local browser = 'chrome';
-local openwebui = '0.8.10';
+local openwebui = '0.9.2';
 local ollama = '0.14.2';
 local nginx = '1.29.3-alpine3.22';
 local debian = 'bookworm-slim';
@@ -8,7 +7,7 @@ local platforms = {
   bookworm: '26.03',
   buster: '25.02',
 };
-local selenium = '4.35.0-20250828';
+local playwright = 'v1.59.1-jammy';
 local deployer = 'https://github.com/syncloud/store/releases/download/4/syncloud-release';
 local python = '3.12-slim-bookworm';
 local go = '1.25';
@@ -106,77 +105,34 @@ local build(arch, test_ui, dind) = [{
                ],
              }
              for distro in distros
-           ] + (if test_ui then 
-                  [
-                    {
-                      name: 'selenium',
-                      image: 'selenium/standalone-' + browser + ':' + selenium,
-                      detach: true,
-                      environment: {
-                        SE_NODE_SESSION_TIMEOUT: '999999',
-                        START_XVFB: 'true',
-                      },
-                      volumes: [{
-                        name: 'shm',
-                        path: '/dev/shm',
-                      }],
-                      commands: [
-                        'cat /etc/hosts',
-                        'DOMAIN="' + distro_default + '.com"',
-                        'APP_DOMAIN="' + name + '.' + distro_default + '.com"',
-                        'getent hosts $APP_DOMAIN | sed "s/$APP_DOMAIN/auth.$DOMAIN/g" | sudo tee -a /etc/hosts',
-                        'cat /etc/hosts',
-                        '/opt/bin/entry_point.sh',
-                      ],
-                    },
-
-                    {
-                      name: 'selenium-video',
-                      image: 'selenium/video:ffmpeg-8.0-20251212',
-                      detach: true,
-                      environment: {
-                        DISPLAY_CONTAINER_NAME: 'selenium',
-                        FILE_NAME: 'video.mkv',
-                      },
-                      volumes: [
-                        {
-                          name: 'shm',
-                          path: '/dev/shm',
-                        },
-                        {
-                          name: 'videos',
-                          path: '/videos',
-                        },
-                      ],
-                    },
-                    {
-                      name: 'test-ui',
-                      image: 'python:' + python,
-                      commands: [
-                        'cd test',
-                        './deps.sh',
-                        'py.test -x -s ui.py --distro=' + distro_default + ' --ver=$DRONE_BUILD_NUMBER --app=' + name + ' --browser=' + browser,
-                      ],
-                      volumes: [{
-                        name: 'videos',
-                        path: '/videos',
-                      }],
-                    },
-              {
-                name: 'test-upgrade',
-                image: 'python:' + python,
-                commands: [
-                  'cd test',
-                  './deps.sh',
-                  'py.test -x -s upgrade.py --distro=' + distro_default + ' --ver=$DRONE_BUILD_NUMBER --app=' + name + ' --browser=' + browser,
-                ],
-                privileged: true,
-                volumes: [{
-                  name: 'videos',
-                  path: '/videos',
-                }],
-              },
-            ] else []) + [
+           ] + (if test_ui then [
+             {
+               name: 'test-ui-desktop',
+               image: 'mcr.microsoft.com/playwright:' + playwright,
+               environment: { DEVICE_USER: 'user', DEVICE_PASSWORD: 'syncloud' },
+               commands: [
+                 './ci/ui.sh desktop ' + name + ' ' + distro_default + ' $DRONE_BUILD_NUMBER',
+               ],
+             },
+             {
+               name: 'test-ui-mobile',
+               image: 'mcr.microsoft.com/playwright:' + playwright,
+               environment: { DEVICE_USER: 'user', DEVICE_PASSWORD: 'syncloud' },
+               commands: [
+                 './ci/ui.sh mobile ' + name + ' ' + distro_default + ' $DRONE_BUILD_NUMBER',
+               ],
+             },
+             {
+               name: 'test-upgrade',
+               image: 'python:' + python,
+               commands: [
+                 'cd test',
+                 './deps.sh',
+                 'py.test -x -s upgrade.py --distro=' + distro_default + ' --ver=$DRONE_BUILD_NUMBER --app=' + name,
+               ],
+               privileged: true,
+             },
+           ] else []) + [
       {
         name: 'upload',
         image: 'debian:' + debian,
@@ -299,14 +255,6 @@ local build(arch, test_ui, dind) = [{
         host: {
           path: '/dev',
         },
-      },
-      {
-        name: 'shm',
-        temp: {},
-      },
-      {
-        name: 'videos',
-        temp: {},
       },
       {
         name: 'dockersock',
