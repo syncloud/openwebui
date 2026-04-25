@@ -129,6 +129,11 @@ def test_backup(device, artifact_dir):
     device.run_ssh("snap run platform.cli backup restore {0}".format(backup['file']))
 
 
+def test_add_noemail_user(device):
+    device.run_ssh("snap run platform.cli user remove noemail", throw=False)
+    device.run_ssh("snap run platform.cli user add noemail --password=Password1")
+
+
 #def test_sql_plugin(device, artifact_dir):
 #    device.run_ssh("snap run openwebui.psql -U openwebui -d openwebui -c 'select * from plugin'", retries=10)
 
