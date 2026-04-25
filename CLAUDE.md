@@ -1,18 +1,22 @@
 # Debugging CI failures
 
-When a CI build fails, always start by identifying the failing step:
+A build runs one pipeline per arch (amd64, arm64, ...) **in parallel**. One arch can pass while another fails — always inspect every pipeline, not just the first.
+
+List failures grouped by arch (prints `<arch> <step> <status>` for any non-success step):
 ```
 curl -s "http://ci.syncloud.org:8080/api/repos/syncloud/openwebui/builds/{N}" | python3 -c "
 import json,sys
 b=json.load(sys.stdin)
 for stage in b.get('stages',[]):
+    arch = stage.get('name')
     for step in stage.get('steps',[]):
-        if step.get('status') == 'failure':
-            print(step.get('name'), '-', step.get('status'))
+        st = step.get('status')
+        if st not in ('success','skipped'):
+            print(arch, step.get('number'), step.get('name'), '-', st)
 "
 ```
 
-Then get the step log (stage=pipeline index, step=step number):
+Then get the step log (stage=pipeline number from `stages[].number`, step=step number from above):
 ```
 curl -s "http://ci.syncloud.org:8080/api/repos/syncloud/openwebui/builds/{N}/logs/{stage}/{step}" | python3 -c "
 import json,sys; [print(l.get('out',''), end='') for l in json.load(sys.stdin)]
