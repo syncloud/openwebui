@@ -19,6 +19,12 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 @pytest.fixture(scope="session")
 def module_setup(request, device, app_dir, artifact_dir):
     def module_teardown():
+        print('=== journalctl (last 500 lines) ===')
+        try:
+            print(device.run_ssh('journalctl --no-pager -n 500'))
+        except Exception as e:
+            print('failed to fetch journal: {}'.format(e))
+        print('=== end journalctl ===')
         device.run_ssh('ls -la /var/snap/openwebui/current/config > {0}/config.ls.log'.format(TMP_DIR), throw=False)
         device.run_ssh('cp /var/snap/openwebui/current/config/webui.yaml {0}/webui.yaml.log'.format(TMP_DIR), throw=False)
         device.run_ssh('cp /var/snap/openwebui/current/config/authelia/config.yml {0}/authelia.config.yml.log'.format(TMP_DIR), throw=False)
