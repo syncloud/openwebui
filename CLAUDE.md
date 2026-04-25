@@ -51,6 +51,8 @@ Browse the top level for a build (returns distro subdirs + snap file):
 curl -s "http://ci.syncloud.org:8081/files/openwebui/{build}-{arch}/"
 ```
 
+**For integration test failures, fetch `journalctl.log` directly from the artifact server — do not add stdout dumps to the test teardown.** The teardown already captures the journal and `scp_from_device`s it into the artifact dir; the drone-scp `artifact` step then uploads the whole directory to `ci.syncloud.org:8081`. Only when port 8081 is itself down (rare; the artifact step will be in `failure`) do you need an alternative.
+
 Each distro dir contains `app/`, `platform/`, and for upgrade/UI tests also `desktop/`, `refresh.journalctl.log`, `video.mkv`:
 ```
 curl -s "http://ci.syncloud.org:8081/files/openwebui/{build}-{arch}/{distro}/"
