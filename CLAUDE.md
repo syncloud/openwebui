@@ -23,6 +23,18 @@ import json,sys; [print(l.get('out',''), end='') for l in json.load(sys.stdin)]
 " | tail -80
 ```
 
+**Live log tail (SSE, no auth):** while a step is `running`, the JSON `/logs/...` endpoint above only contains what's been flushed so far. To watch a step in real time, use Drone's Server-Sent Events stream:
+
+```
+curl -sN "http://ci.syncloud.org:8080/api/stream/syncloud/openwebui/{N}/{stage}/{step}" \
+  | python3 -c "import sys,json
+for line in sys.stdin:
+    if line.startswith('data: '):
+        e=json.loads(line[6:]); sys.stdout.write(e.get('out',''))" 
+```
+
+Each event is `data: {\"pos\":N,\"out\":\"...\",\"time\":S}`. The stream ends when the step finishes. Useful when artifact upload is broken and you can't read `journalctl.log` after the fact — anything the test prints to stdout is visible immediately.
+
 # CI
 
 http://ci.syncloud.org:8080/syncloud/openwebui
