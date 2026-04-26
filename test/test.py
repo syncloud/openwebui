@@ -55,7 +55,7 @@ def test_start(module_setup, device, device_host, app, domain):
     device.run_ssh('mkdir {0}'.format(TMP_DIR))
 
   
-@pytest.mark.flaky(retries=50, delay=10)
+@pytest.mark.flaky(retries=20, delay=10)
 def test_activate_device(device):
     device.run_ssh('rm -f /var/snap/platform/current/syncloud.crt', throw=False)
     response = retry(device.activate_custom)
@@ -76,7 +76,7 @@ def test_install(app_archive_path, device_host, device_password, device):
     local_install(device_host, device_password, app_archive_path)
 
 
-@pytest.mark.flaky(retries=100, delay=5)
+@pytest.mark.flaky(retries=24, delay=5)
 def test_visible_through_platform(app_domain):
     response = requests.get('https://{0}'.format(app_domain), verify=False)
     assert response.status_code == 200
@@ -110,7 +110,7 @@ def test_upgrade(app_archive_path, device_host, device_password):
     local_install(device_host, device_password, app_archive_path)
 
 
-@pytest.mark.flaky(retries=100, delay=5)
+@pytest.mark.flaky(retries=24, delay=5)
 def test_index_after_upgrade(app_domain):
     wait_for_rest(requests.session(), "https://{0}".format(app_domain), 200, 10)
 
