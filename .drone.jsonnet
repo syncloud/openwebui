@@ -4,7 +4,7 @@ local ollama = '0.14.2';
 local nginx = '1.29.3-alpine3.22';
 local debian = 'bookworm-slim';
 local platforms = {
-  bookworm: '26.04.7',
+  bookworm: '26.04.8',
   buster: '25.02',
 };
 local playwright = 'v1.59.1-jammy';
