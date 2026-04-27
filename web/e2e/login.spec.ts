@@ -7,12 +7,12 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 
 test('login as syncloud user and reach main page', async ({ page }) => {
   await loginToOpenWebUI(page, credsFromEnv())
-  await expect(page.locator('xpath=//div[contains(.,"Hello,")]')).toBeVisible({ timeout: 30_000 })
+  await expect(page.locator('xpath=//div[contains(.,"Hello,")]').first()).toBeVisible({ timeout: 30_000 })
 })
 
 test('upload epub without errors', async ({ page }) => {
   await loginToOpenWebUI(page, credsFromEnv())
-  await expect(page.locator('xpath=//div[contains(.,"Hello,")]')).toBeVisible({ timeout: 30_000 })
+  await expect(page.locator('xpath=//div[contains(.,"Hello,")]').first()).toBeVisible({ timeout: 30_000 })
   await page.setInputFiles('input[type="file"]', join(__dirname, 'data', 'test.epub'))
   await expect(page.locator('.spinner_ajPY')).toHaveCount(0, { timeout: 60_000 })
   const html = await page.content()

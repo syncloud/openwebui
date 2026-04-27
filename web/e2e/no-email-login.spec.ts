@@ -8,5 +8,5 @@ test('user with no email logs in via OAUTH email fallback', async ({ page }) => 
     throw new Error('NO_EMAIL_USER and NO_EMAIL_PASSWORD must be set')
   }
   await loginToOpenWebUI(page, { user, password })
-  await expect(page.locator('xpath=//div[contains(.,"Hello,")]')).toBeVisible({ timeout: 30_000 })
+  await expect(page.locator('xpath=//div[contains(.,"Hello,")]').first()).toBeVisible({ timeout: 30_000 })
 })
