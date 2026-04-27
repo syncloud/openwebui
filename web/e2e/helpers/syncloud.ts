@@ -30,7 +30,10 @@ export async function acceptConsent(page: Page): Promise<void> {
 
 export async function loginToOpenWebUI(page: Page, creds: SyncloudCreds): Promise<void> {
   await openApp(page)
-  await page.locator('xpath=//div[.="Get started"]/../button').click()
+  const getStarted = page.locator('xpath=//div[.="Get started"]/../button')
+  if (await getStarted.isVisible({ timeout: 5_000 }).catch(() => false)) {
+    await getStarted.click()
+  }
   await page.locator('xpath=//span[.="Continue with Authelia"]').click()
   await page.waitForURL(/^https:\/\/auth\./, { timeout: 30_000 })
   await loginOidc(page, creds)
