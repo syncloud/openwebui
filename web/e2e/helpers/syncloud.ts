@@ -30,23 +30,18 @@ export async function acceptConsent(page: Page): Promise<void> {
 
 export async function loginToOpenWebUI(page: Page, creds: SyncloudCreds): Promise<void> {
   await openApp(page)
-  const getStarted = page.locator('xpath=//div[.="Get started"]/../button')
+  const getStarted = page.getByRole('button', { name: 'Get started' })
   if (await getStarted.isVisible({ timeout: 5_000 }).catch(() => false)) {
     await getStarted.click()
+    await getStarted.waitFor({ state: 'hidden', timeout: 10_000 })
   }
-  await page.locator('xpath=//span[.="Continue with Authelia"]').click()
-  await page.waitForURL(/^https:\/\/auth\./, { timeout: 30_000 })
+  await page.getByRole('button', { name: 'Continue with Authelia' }).click()
   await loginOidc(page, creds)
-  await page.waitForURL((url) => url.pathname.includes('/consent/') || !url.pathname.startsWith('/auth/'), {
-    timeout: 30_000,
-  })
-  if (page.url().includes('/consent/')) {
-    await acceptConsent(page)
+  const consent = page.locator('#openid-consent-accept')
+  if (await consent.isVisible({ timeout: 10_000 }).catch(() => false)) {
+    await consent.click()
   }
-  await page.waitForURL((url) => !url.pathname.startsWith('/auth/') && !url.pathname.includes('/consent/'), {
-    timeout: 30_000,
-  })
-  const okay = page.locator('xpath=//button[contains(.,"Okay")]')
+  const okay = page.getByRole('button', { name: /Okay/ })
   if (await okay.isVisible({ timeout: 10_000 }).catch(() => false)) {
     await okay.click()
   }
