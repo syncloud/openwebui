@@ -31,11 +31,13 @@ export async function acceptConsent(page: Page): Promise<void> {
 export async function loginToOpenWebUI(page: Page, creds: SyncloudCreds): Promise<void> {
   await openApp(page)
   const getStarted = page.getByRole('button', { name: 'Get started' })
-  if (await getStarted.isVisible({ timeout: 5_000 }).catch(() => false)) {
+  const authelia = page.getByRole('button', { name: 'Continue with Authelia' })
+  await getStarted.or(authelia).first().waitFor({ state: 'visible', timeout: 30_000 })
+  if (await getStarted.isVisible().catch(() => false)) {
     await getStarted.click()
     await getStarted.waitFor({ state: 'hidden', timeout: 10_000 })
   }
-  await page.getByRole('button', { name: 'Continue with Authelia' }).click()
+  await authelia.click()
   await loginOidc(page, creds)
   const consent = page.locator('#openid-consent-accept')
   if (await consent.isVisible({ timeout: 10_000 }).catch(() => false)) {
