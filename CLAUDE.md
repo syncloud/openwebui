@@ -1,23 +1,39 @@
 # Debugging CI failures
 
-When a CI build fails, always start by identifying the failing step:
+A build runs one pipeline per arch (amd64, arm64, ...) **in parallel**. One arch can pass while another fails — always inspect every pipeline, not just the first.
+
+List failures grouped by arch (prints `<arch> <step> <status>` for any non-success step):
 ```
 curl -s "http://ci.syncloud.org:8080/api/repos/syncloud/openwebui/builds/{N}" | python3 -c "
 import json,sys
 b=json.load(sys.stdin)
 for stage in b.get('stages',[]):
+    arch = stage.get('name')
     for step in stage.get('steps',[]):
-        if step.get('status') == 'failure':
-            print(step.get('name'), '-', step.get('status'))
+        st = step.get('status')
+        if st not in ('success','skipped'):
+            print(arch, step.get('number'), step.get('name'), '-', st)
 "
 ```
 
-Then get the step log (stage=pipeline index, step=step number):
+Then get the step log (stage=pipeline number from `stages[].number`, step=step number from above):
 ```
 curl -s "http://ci.syncloud.org:8080/api/repos/syncloud/openwebui/builds/{N}/logs/{stage}/{step}" | python3 -c "
 import json,sys; [print(l.get('out',''), end='') for l in json.load(sys.stdin)]
 " | tail -80
 ```
+
+**Live log tail (SSE, no auth):** while a step is `running`, the JSON `/logs/...` endpoint above only contains what's been flushed so far. To watch a step in real time, use Drone's Server-Sent Events stream:
+
+```
+curl -sN "http://ci.syncloud.org:8080/api/stream/syncloud/openwebui/{N}/{stage}/{step}" \
+  | python3 -c "import sys,json
+for line in sys.stdin:
+    if line.startswith('data: '):
+        e=json.loads(line[6:]); sys.stdout.write(e.get('out',''))" 
+```
+
+Each event is `data: {\"pos\":N,\"out\":\"...\",\"time\":S}`. The stream ends when the step finishes. Useful when artifact upload is broken and you can't read `journalctl.log` after the fact — anything the test prints to stdout is visible immediately.
 
 # CI
 
@@ -47,6 +63,8 @@ Browse the top level for a build (returns distro subdirs + snap file):
 curl -s "http://ci.syncloud.org:8081/files/openwebui/{build}-{arch}/"
 ```
 
+**For integration test failures, fetch `journalctl.log` directly from the artifact server — do not add stdout dumps to the test teardown.** The teardown already captures the journal and `scp_from_device`s it into the artifact dir; the drone-scp `artifact` step then uploads the whole directory to `ci.syncloud.org:8081`. Only when port 8081 is itself down (rare; the artifact step will be in `failure`) do you need an alternative.
+
 Each distro dir contains `app/`, `platform/`, and for upgrade/UI tests also `desktop/`, `refresh.journalctl.log`, `video.mkv`:
 ```
 curl -s "http://ci.syncloud.org:8081/files/openwebui/{build}-{arch}/{distro}/"
@@ -62,14 +80,9 @@ Directory structure:
       journalctl.log          # full journal from integration test teardown
       ps.log, netstat.log     # process/network state at teardown
     platform/                 # platform logs
-    desktop/                  # UI test artifacts (amd64 only)
-      journalctl.log
-      screenshot/
-        {test-name}.png
-        {test-name}.html.log
-      log/
+    desktop/                  # UI test artifacts (amd64 only) — Playwright report/test-results
+    mobile/                   # UI test artifacts for mobile project
     refresh.journalctl.log    # full journal from upgrade test (pre/post-refresh)
-    video.mkv                 # selenium recording
 ```
 
 Download a file directly:
@@ -80,14 +93,16 @@ curl -O "http://ci.syncloud.org:8081/files/openwebui/282-amd64/bookworm/desktop/
 
 # Running Drone builds locally
 
+The `drone` CLI is not on $PATH. It lives at `../drone-cli/drone` (sibling project). Either prefix calls with that path, or add a shell alias.
+
 Generate `.drone.yml` from jsonnet (run from project root):
 ```
-drone jsonnet --stdout --stream > .drone.yml
+../drone-cli/drone jsonnet --stdout --stream > .drone.yml
 ```
 
 Run a specific pipeline with selected steps (e.g. amd64 up to `test bookworm`):
 ```
-drone exec --pipeline amd64 --trusted \
+../drone-cli/drone exec --pipeline amd64 --trusted \
   --include version \
   --include ollama \
   --include "ollama test" \

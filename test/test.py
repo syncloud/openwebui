@@ -55,7 +55,7 @@ def test_start(module_setup, device, device_host, app, domain):
     device.run_ssh('mkdir {0}'.format(TMP_DIR))
 
   
-@pytest.mark.flaky(retries=50, delay=10)
+@pytest.mark.flaky(retries=20, delay=10)
 def test_activate_device(device):
     device.run_ssh('rm -f /var/snap/platform/current/syncloud.crt', throw=False)
     response = retry(device.activate_custom)
@@ -127,6 +127,11 @@ def test_backup(device, artifact_dir):
     backup = json.loads(response)[0]
     device.run_ssh('tar tvf {0}/{1}'.format(backup['path'], backup['file']))
     device.run_ssh("snap run platform.cli backup restore {0}".format(backup['file']))
+
+
+def test_add_noemail_user(device):
+    device.run_ssh("snap run platform.cli user remove noemail", throw=False)
+    device.run_ssh("snap run platform.cli user add noemail --password=Password1")
 
 
 #def test_sql_plugin(device, artifact_dir):
