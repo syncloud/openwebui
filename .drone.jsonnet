@@ -124,6 +124,14 @@ local build(arch, test_ui, dind) = [{
                ],
                privileged: true,
              },
+             {
+               name: 'test-ui-after-upgrade',
+               image: 'mcr.microsoft.com/playwright:' + playwright,
+               environment: { DEVICE_USER: 'user', DEVICE_PASSWORD: 'Password1' },
+               commands: [
+                 './ci/ui.sh desktop ' + name + ' ' + distro_default + ' $DRONE_BUILD_NUMBER after-upgrade no-email-login.spec.ts',
+               ],
+             },
            ] else []) + [
       {
         name: 'upload',
