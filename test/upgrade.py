@@ -32,9 +32,9 @@ def test_install_old(device, app_domain):
     device.run_ssh('snap remove openwebui', throw=False)
     device.run_ssh(
         'ARCH=$(dpkg --print-architecture); '
-        'curl -fsSL -o /tmp/openwebui_old.snap '
-        'http://apps.syncloud.org/apps/openwebui_{rev}_${{ARCH}}.snap'.format(rev=OLD_REV),
-        retries=5,
+        'curl -fsSL --retry 10 --retry-delay 10 --retry-all-errors '
+        '-o /tmp/openwebui_old.snap '
+        'https://apps.syncloud.org/apps/openwebui_{rev}_${{ARCH}}.snap'.format(rev=OLD_REV),
     )
     device.run_ssh('snap install --dangerous /tmp/openwebui_old.snap')
     wait_for_rest(requests.session(), "https://{0}".format(app_domain), 200, 100)
