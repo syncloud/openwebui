@@ -12,6 +12,8 @@ local go = '1.25';
 local distro_default = 'bookworm';
 local distros = ['bookworm', 'buster'];
 
+local platform_image(distro, arch) =
+  'syncloud/platform-' + distro + '-' + arch + ':' + platform;
 
 local build(arch, test_ui) = [{
   kind: 'pipeline',
@@ -31,63 +33,54 @@ local build(arch, test_ui) = [{
              },
 {
       name: 'ollama',
-      image: "ollama/ollama:" + ollama,
+      image: 'ollama/ollama:' + ollama,
       commands: [
         './ollama/build.sh',
       ],
     },
+  ] + [
     {
-      name: 'ollama test',
-      image: 'syncloud/platform-' + distro_default + '-' + arch + ':' + platform,
+      name: 'ollama test ' + distro,
+      image: platform_image(distro, arch),
       commands: [
         './ollama/test.sh',
       ],
-    },
-    {
-      name: 'ollama test buster',
-      image: 'syncloud/platform-buster-' + arch + ':' + platform,
-      commands: [
-        './ollama/test.sh',
-      ],
-    },
+    }
+    for distro in distros
+  ] + [
     {
       name: 'openwebui',
-      image: "ghcr.io/open-webui/open-webui:" + openwebui,
+      image: 'ghcr.io/open-webui/open-webui:' + openwebui,
       commands: [
         './openwebui/build.sh',
       ],
     },
+  ] + [
     {
-      name: 'openwebui test',
-      image: 'syncloud/platform-' + distro_default + '-' + arch + ':' + platform,
+      name: 'openwebui test ' + distro,
+      image: platform_image(distro, arch),
       commands: [
         './openwebui/test.sh',
       ],
-    },
+    }
+    for distro in distros
+  ] + [
     {
-      name: 'openwebui test buster',
-      image: 'syncloud/platform-buster-' + arch + ':' + platform,
+      name: 'cli',
+      image: 'golang:' + go,
       commands: [
-        './openwebui/test.sh',
+        './cli/build.sh',
       ],
     },
-    
-             {
-               name: 'cli',
-               image: 'golang:' + go,
-               commands: [
-                 './cli/build.sh',
-               ],
-             },
-      {
-               name: 'package',
-               image: 'debian:' + debian,
-               commands: [
-                 'VERSION=$(cat version)',
-                 './package.sh ' + name + ' $VERSION ',
-               ],
-             },
-           ] + [
+    {
+      name: 'package',
+      image: 'debian:' + debian,
+      commands: [
+        'VERSION=$(cat version)',
+        './package.sh ' + name + ' $VERSION ',
+      ],
+    },
+  ] + [
              {
                name: 'test ' + distro,
                image: 'python:' + python,
@@ -221,7 +214,7 @@ local build(arch, test_ui) = [{
     ] + [
       {
         name: name + '.' + distro + '.com',
-        image: 'syncloud/platform-' + distro + '-' + arch + ':' + platform,
+        image: platform_image(distro, arch),
         privileged: true,
         entrypoint: ['/bin/sh', '-c', "mkdir -p /etc/systemd/system/snapd.service.d && printf '[Service]\\nExecStartPost=/bin/sh -c \"/usr/bin/snap set system refresh.hold=2099-01-01T00:00:00Z\"\\n' > /etc/systemd/system/snapd.service.d/disable-refresh.conf && exec /sbin/init"],
         volumes: [
