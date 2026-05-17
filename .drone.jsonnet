@@ -101,12 +101,30 @@ local build(arch, test_ui) = [{
                ],
              },
              {
-               name: 'test-upgrade',
+               name: 'test-upgrade-install-old',
                image: 'python:' + python,
                commands: [
                  'cd test',
                  './deps.sh',
-                 'py.test -x -s upgrade.py --distro=' + distro_default + ' --ver=$DRONE_BUILD_NUMBER --app=' + name,
+                 'py.test -x -s upgrade.py -k "test_start or test_install_old" --distro=' + distro_default + ' --ver=$DRONE_BUILD_NUMBER --app=' + name,
+               ],
+               privileged: true,
+             },
+             {
+               name: 'test-ui-on-old',
+               image: 'mcr.microsoft.com/playwright:' + playwright,
+               environment: { DEVICE_USER: 'user', DEVICE_PASSWORD: 'Password1' },
+               commands: [
+                 './ci/ui.sh desktop ' + name + ' ' + distro_default + ' $DRONE_BUILD_NUMBER on-old login.spec.ts',
+               ],
+             },
+             {
+               name: 'test-upgrade-refresh-new',
+               image: 'python:' + python,
+               commands: [
+                 'cd test',
+                 './deps.sh',
+                 'py.test -x -s upgrade.py -k "test_start or test_refresh_to_new" --distro=' + distro_default + ' --ver=$DRONE_BUILD_NUMBER --app=' + name,
                ],
                privileged: true,
              },
@@ -196,7 +214,6 @@ local build(arch, test_ui) = [{
     trigger: {
       event: [
         'push',
-        'pull_request',
       ],
     },
     services: [

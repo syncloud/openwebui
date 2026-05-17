@@ -25,9 +25,13 @@ def test_start(module_setup, app, device_host, domain, device):
     device.run_ssh('mkdir {0}'.format(TMP_DIR), throw=False)
 
 
-def test_upgrade(device, device_user, device_password, device_host, app_archive_path, app_domain, app_dir):
+def test_install_old(device, app_domain):
     device.run_ssh('snap remove openwebui')
     device.run_ssh('snap install openwebui', retries=10)
+    wait_for_rest(requests.session(), "https://{0}".format(app_domain), 200, 100)
+
+
+def test_refresh_to_new(device, device_host, device_password, app_archive_path, app_domain):
     local_install(device_host, device_password, app_archive_path)
     wait_for_rest(requests.session(), "https://{0}".format(app_domain), 200, 100)
 
