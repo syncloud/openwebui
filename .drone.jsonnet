@@ -3,7 +3,8 @@ local openwebui = '0.9.2';
 local ollama = '0.14.2';
 local nginx = '1.29.3-alpine3.22';
 local debian = 'bookworm-slim';
-local platform = '26.04.9';
+local platform = '26.04.10';
+local dind = '20.10.21-dind';
 local playwright = 'v1.59.1-jammy';
 local deployer = 'https://github.com/syncloud/store/releases/download/4/syncloud-release';
 local python = '3.12-slim-bookworm';
@@ -12,7 +13,7 @@ local distro_default = 'bookworm';
 local distros = ['bookworm', 'buster'];
 
 
-local build(arch, test_ui, dind) = [{
+local build(arch, test_ui) = [{
   kind: 'pipeline',
   type: 'docker',
   name: arch,
@@ -257,5 +258,5 @@ local build(arch, test_ui, dind) = [{
   },
 ];
 
-build('amd64', true, '20.10.21-dind') +
-build('arm64', false, '20.10.21-dind')
+build('amd64', true) +
+build('arm64', false)
