@@ -115,7 +115,7 @@ local build(arch, test_ui) = [{
                image: 'mcr.microsoft.com/playwright:' + playwright,
                environment: { DEVICE_USER: 'user', DEVICE_PASSWORD: 'Password1' },
                commands: [
-                 './ci/ui.sh desktop ' + name + ' ' + distro_default + ' $DRONE_BUILD_NUMBER on-old login.spec.ts',
+                 './ci/ui.sh desktop ' + name + ' ' + distro_default + ' $DRONE_BUILD_NUMBER on-old admin-login.spec.ts',
                ],
              },
              {
