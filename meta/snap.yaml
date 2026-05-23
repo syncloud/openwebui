@@ -35,10 +35,10 @@ apps:
     command: bin/cli restore-post-start
 
 confinement: strict
-description: openwebui
+description: AI platform designed to operate entirely offline
 grade: stable
 name: openwebui
-summary: openwebui
+summary: Open WebUI
 
 
 
