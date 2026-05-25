@@ -4,8 +4,8 @@ local ollama = '0.14.2';
 local nginx = '1.29.3-alpine3.22';
 local debian = 'bookworm-slim';
 local platforms = {
-  bookworm: '26.04.9',
-  buster: '25.02',
+  bookworm: '26.04.10',
+  buster: '26.04.10',
 };
 local playwright = 'v1.59.1-jammy';
 local deployer = 'https://github.com/syncloud/store/releases/download/4/syncloud-release';
