@@ -14,7 +14,7 @@ ART=/drone/src/artifact/e2e/${PROJECT}
 mkdir -p "$ART"
 apt-get update -qq && apt-get install -y -qq sshpass openssh-client curl >/dev/null
 trap '
-  sshpass -p syncloud ssh -p 22 -o ConnectTimeout=10 -o StrictHostKeyChecking=no root@${APP}.${DISTRO}.com "journalctl -u snap.${APP}.webui --no-pager | tail -500" > "$ART/journalctl.${APP}.log" 2>&1 || true
+  sshpass -p Password1 ssh -p 22 -o ConnectTimeout=10 -o StrictHostKeyChecking=no root@${APP}.${DISTRO}.com "journalctl -u snap.${APP}.webui --no-pager | tail -500" > "$ART/journalctl.${APP}.log" 2>&1 || true
   find /drone/src/web/test-results -maxdepth 2 -name "*.png" -exec cp {} "$ART/" \; 2>/dev/null
   for d in /drone/src/web/test-results/*/; do
     base=$(basename "$d")
