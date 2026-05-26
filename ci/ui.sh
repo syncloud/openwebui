@@ -5,11 +5,25 @@ APP=$2
 DISTRO=$3
 VERSION=$4
 
-getent hosts ${APP}.${DISTRO}.com | sed "s/${APP}.${DISTRO}.com/auth.${DISTRO}.com/g" | tee -a /etc/hosts
+PLATFORM_IP=$(getent hosts ${APP}.${DISTRO}.com | awk '{print $1}')
+for host in auth users; do
+  echo "${PLATFORM_IP} ${host}.${DISTRO}.com" | tee -a /etc/hosts
+done
 
-ART=/drone/src/artifact/${PROJECT}
+ART=/drone/src/artifact/e2e/${PROJECT}
 mkdir -p "$ART"
-trap 'cp -r /drone/src/web/test-results "$ART/" 2>/dev/null; cp -r /drone/src/web/playwright-report "$ART/" 2>/dev/null; chmod -R a+r "$ART" 2>/dev/null; exit' EXIT INT TERM
+trap '
+  find /drone/src/web/test-results -maxdepth 2 -name "*.png" -exec cp {} "$ART/" \; 2>/dev/null
+  for d in /drone/src/web/test-results/*/; do
+    base=$(basename "$d")
+    if ls "$d"error-context.md "$d"trace.zip >/dev/null 2>&1; then
+      mkdir -p "$ART/errors/$base"
+      cp "$d"error-context.md "$d"trace.zip "$ART/errors/$base/" 2>/dev/null
+    fi
+  done
+  chmod -R a+r "$ART" 2>/dev/null
+  exit
+' EXIT INT TERM
 
 cd web
 npm ci
