@@ -27,12 +27,14 @@ trap '
   exit
 ' EXIT INT TERM
 
-APP_URL=https://${APP}.${DISTRO}.com/
-echo "waiting for ${APP_URL} to return 200"
-until curl -sk -o /dev/null -w '%{http_code}\n' "${APP_URL}" | grep -q '^200$'; do
-  sleep 3
+for host in ${APP} users auth; do
+  URL=https://${host}.${DISTRO}.com/
+  echo "waiting for ${URL} to return 200"
+  until curl -sk -o /dev/null -w '%{http_code}\n' "${URL}" | grep -q '^200$'; do
+    sleep 3
+  done
+  echo "${URL} is ready"
 done
-echo "${APP_URL} is ready"
 
 cd web
 npm ci
