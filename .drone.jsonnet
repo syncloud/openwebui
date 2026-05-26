@@ -8,7 +8,6 @@ local playwright = 'v1.59.1-jammy';
 local deployer = 'https://github.com/syncloud/store/releases/download/4/syncloud-release';
 local python = '3.12-slim-bookworm';
 local go = '1.25';
-local dind = '20.10.21-dind';
 local distro_default = 'bookworm';
 local distros = ['bookworm', 'buster'];
 
@@ -58,14 +57,7 @@ local build(arch, test_ui) = [{
     {
       name: 'cli',
       image: 'golang:' + go,
-      commands: [
-        'cd cli',
-        'CGO_ENABLED=0 go build -o ../build/snap/meta/hooks/install ./cmd/install',
-        'CGO_ENABLED=0 go build -o ../build/snap/meta/hooks/configure ./cmd/configure',
-        'CGO_ENABLED=0 go build -o ../build/snap/meta/hooks/pre-refresh ./cmd/pre-refresh',
-        'CGO_ENABLED=0 go build -o ../build/snap/meta/hooks/post-refresh ./cmd/post-refresh',
-        'CGO_ENABLED=0 go build -o ../build/snap/bin/cli ./cmd/cli',
-      ],
+      commands: ['./cli/build.sh'],
     },
     {
       name: 'package',
@@ -169,13 +161,6 @@ local build(arch, test_ui) = [{
   },
   services: [
     {
-      name: 'docker',
-      image: 'docker:' + dind,
-      privileged: true,
-      volumes: [{ name: 'dockersock', path: '/var/run' }],
-    },
-  ] + [
-    {
       name: name + '.' + distro + '.com',
       image: platform_image(distro, arch),
       privileged: true,
@@ -190,7 +175,6 @@ local build(arch, test_ui) = [{
   volumes: [
     { name: 'dbus', host: { path: '/var/run/dbus' } },
     { name: 'dev', host: { path: '/dev' } },
-    { name: 'dockersock', temp: {} },
   ],
 }];
 
