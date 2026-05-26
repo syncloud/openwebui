@@ -13,6 +13,10 @@ done
 ART=/drone/src/artifact/e2e/${PROJECT}
 mkdir -p "$ART"
 apt-get update -qq && apt-get install -y -qq sshpass openssh-client curl >/dev/null
+
+DEVICE_SSH="sshpass -p Password1 ssh -p 22 -o ConnectTimeout=10 -o StrictHostKeyChecking=no root@${APP}.${DISTRO}.com"
+$DEVICE_SSH "snap install users 2>&1 || snap refresh users 2>&1 || true; snap list users || true"
+
 trap '
   sshpass -p Password1 ssh -p 22 -o ConnectTimeout=10 -o StrictHostKeyChecking=no root@${APP}.${DISTRO}.com "journalctl --since \"15 min ago\" --no-pager" > "$ART/journalctl.log" 2>&1 || true
   find /drone/src/web/test-results -maxdepth 2 -name "*.png" -exec cp {} "$ART/" \; 2>/dev/null
@@ -29,11 +33,13 @@ trap '
 
 for host in ${APP} users auth; do
   URL=https://${host}.${DISTRO}.com/
-  echo "waiting for ${URL} to return 200"
-  until curl -sk -o /dev/null -w '%{http_code}\n' "${URL}" | grep -q '^200$'; do
+  echo "waiting for ${URL} to return 200 (max 180s)"
+  for i in $(seq 1 60); do
+    code=$(curl -sk -o /dev/null -w '%{http_code}' "${URL}")
+    [ "$code" = "200" ] && break
     sleep 3
   done
-  echo "${URL} is ready"
+  echo "${URL} -> ${code}"
 done
 
 cd web
