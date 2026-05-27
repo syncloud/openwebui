@@ -28,7 +28,20 @@ export default async function () {
     appendFileSync('/etc/hosts', `${platformIp} ${host}.${DOMAIN}\n`)
   }
 
-  ssh('snap install users 2>&1 || snap refresh users 2>&1 || true; snap list users', { throw: false })
+  ssh('snap install users 2>&1 || snap refresh users 2>&1 || true', { throw: false })
+
+  const installDeadline = Date.now() + 600_000
+  let installed = false
+  while (Date.now() < installDeadline) {
+    const out = ssh('snap list users 2>&1 || true', { throw: false })
+    if (/^users\s/m.test(out)) {
+      installed = true
+      console.log(`users snap installed: ${out.split('\n').find(l => l.startsWith('users'))?.trim()}`)
+      break
+    }
+    await new Promise(r => setTimeout(r, 5_000))
+  }
+  if (!installed) throw new Error('users snap not installed within 10 minutes')
 
   for (const host of [APP, 'users', 'auth']) {
     const url = `https://${host}.${DOMAIN}/`
