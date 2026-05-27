@@ -5,17 +5,15 @@ APP=$2
 DISTRO=$3
 VERSION=$4
 
-getent hosts ${APP}.${DISTRO}.com | sed "s/${APP}.${DISTRO}.com/auth.${DISTRO}.com/g" | tee -a /etc/hosts
+apt-get update -qq && apt-get install -y -qq sshpass openssh-client curl >/dev/null
 
-ART=/drone/src/artifact/${PROJECT}
-mkdir -p "$ART"
-trap 'cp -r /drone/src/web/test-results "$ART/" 2>/dev/null; cp -r /drone/src/web/playwright-report "$ART/" 2>/dev/null; chmod -R a+r "$ART" 2>/dev/null; exit' EXIT INT TERM
+export PLAYWRIGHT_APP=${APP}
+export PLAYWRIGHT_DOMAIN=${DISTRO}.com
+export PLAYWRIGHT_VERSION=${VERSION}
+export PLAYWRIGHT_ARTIFACT_DIR=/drone/src/artifact
+export NO_EMAIL_USER=noemail
+export NO_EMAIL_PASSWORD=Password1
 
 cd web
 npm ci
-PLAYWRIGHT_DOMAIN=${DISTRO}.com \
-PLAYWRIGHT_APP=${APP} \
-PLAYWRIGHT_VERSION=${VERSION} \
-NO_EMAIL_USER=noemail \
-NO_EMAIL_PASSWORD=Password1 \
-  npx playwright test --project=${PROJECT}
+npx playwright test --project=${PROJECT}

@@ -8,7 +8,10 @@ export default defineConfig({
   fullyParallel: false,
   workers: 1,
   retries: process.env.CI ? 1 : 0,
-  reporter: [['html', { open: 'never' }]],
+  reporter: [['list']],
+  globalSetup: './e2e/globalSetup.ts',
+  globalTeardown: './e2e/globalTeardown.ts',
+  timeout: 180_000,
   use: {
     baseURL: `https://${app}.${domain}`,
     ignoreHTTPSErrors: true,

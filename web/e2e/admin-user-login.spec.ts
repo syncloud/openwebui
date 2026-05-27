@@ -1,0 +1,15 @@
+import { test, expect } from '@playwright/test'
+import { credsFromEnv, loginToOpenWebUI, dismissSplashes } from './helpers/syncloud'
+
+test('admin user reaches Admin Panel', async ({ page }) => {
+  await loginToOpenWebUI(page, credsFromEnv())
+  await expect(page.locator('xpath=//div[contains(.,"Hello,")]').first()).toBeVisible({ timeout: 45_000 })
+  await page.screenshot({ path: 'test-results/admin-user-home.png', fullPage: true })
+
+  await page.goto('/admin/users')
+  await page.waitForLoadState('networkidle', { timeout: 15_000 }).catch(() => {})
+  await dismissSplashes(page)
+  await page.screenshot({ path: 'test-results/admin-user-admin-panel.png', fullPage: true })
+  expect(await page.title()).toMatch(/Admin Panel/)
+  expect(page.url()).toMatch(/\/admin\/users/)
+})

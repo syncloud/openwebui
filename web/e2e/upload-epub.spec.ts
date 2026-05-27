@@ -5,11 +5,6 @@ import { fileURLToPath } from 'node:url'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
-test('login as syncloud user and reach main page', async ({ page }) => {
-  await loginToOpenWebUI(page, credsFromEnv())
-  await expect(page.locator('xpath=//div[contains(.,"Hello,")]').first()).toBeVisible({ timeout: 30_000 })
-})
-
 test('upload epub without errors', async ({ page }) => {
   await loginToOpenWebUI(page, credsFromEnv())
   await expect(page.locator('xpath=//div[contains(.,"Hello,")]').first()).toBeVisible({ timeout: 30_000 })

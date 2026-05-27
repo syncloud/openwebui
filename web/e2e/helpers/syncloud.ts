@@ -43,8 +43,20 @@ export async function loginToOpenWebUI(page: Page, creds: SyncloudCreds): Promis
   if (await consent.isVisible({ timeout: 10_000 }).catch(() => false)) {
     await consent.click()
   }
-  const okay = page.getByRole('button', { name: /Okay/ })
-  if (await okay.isVisible({ timeout: 10_000 }).catch(() => false)) {
+  await dismissSplashes(page)
+}
+
+export async function dismissSplashes(page: Page): Promise<void> {
+  const whatsNew = page.getByRole('button', { name: /Okay, Let's Go!?/i })
+  if (await whatsNew.isVisible({ timeout: 15_000 }).catch(() => false)) {
+    await whatsNew.click()
+  }
+  const okay = page.getByRole('button', { name: /^Okay/ })
+  if (await okay.isVisible({ timeout: 5_000 }).catch(() => false)) {
     await okay.click()
+  }
+  const updateToast = page.locator('button[aria-label="Close"]').first()
+  if (await updateToast.isVisible({ timeout: 2_000 }).catch(() => false)) {
+    await updateToast.click().catch(() => {})
   }
 }
