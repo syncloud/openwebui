@@ -5,14 +5,11 @@ cd ${DIR}
 BUILD_DIR=${DIR}/../build/snap/openwebui
 mkdir -p ${BUILD_DIR}
 
+python -m spacy download en_core_web_sm
+
 cp -r /usr ${BUILD_DIR}
 cp -r /app ${BUILD_DIR}
 cp -r $DIR/bin ${BUILD_DIR}
-
-OAUTH_PY=${BUILD_DIR}/app/backend/open_webui/utils/oauth.py
-grep -q 'if allowed_role == "\*" or allowed_role in oauth_roles:' ${OAUTH_PY} || \
-  sed -i 's|if allowed_role in oauth_roles:|if allowed_role == "*" or allowed_role in oauth_roles:|' ${OAUTH_PY}
-grep -q 'if allowed_role == "\*" or allowed_role in oauth_roles:' ${OAUTH_PY}
 
 rm -rf ${BUILD_DIR}/usr/lib/gcc
 rm -rf ${BUILD_DIR}/usr/local/lib/python3.11/site-packages/playwright

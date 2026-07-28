@@ -2,17 +2,13 @@ import { test, expect } from '@playwright/test'
 import { credsFromEnv, loginToOpenWebUI, dismissSplashes } from './helpers/syncloud'
 import { createSyncloudUser } from './helpers/syncloud-users'
 
-const FIRST = 'regular'
-const LAST = 'user'
-const LOGIN = `${FIRST}${LAST}`
+const LOGIN = 'regularuser'
 const PASSWORD = 'Repr0duce!Bug-2026-Strong'
 
-test('regular Syncloud user (auto per-user LDAP group) can log in to openwebui and is NOT an admin', async ({ browser }) => {
+test('regular Syncloud user (no LDAP groups) can log in to openwebui and is NOT an admin', async ({ browser }) => {
   const admin = credsFromEnv()
 
-  const setupCtx = await browser.newContext({ ignoreHTTPSErrors: true })
-  await createSyncloudUser(await setupCtx.newPage(), admin, { firstName: FIRST, lastName: LAST, password: PASSWORD })
-  await setupCtx.close()
+  createSyncloudUser({ login: LOGIN, password: PASSWORD })
 
   const adminCtx = await browser.newContext({ ignoreHTTPSErrors: true })
   await loginToOpenWebUI(await adminCtx.newPage(), admin)

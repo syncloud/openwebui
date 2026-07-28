@@ -11,6 +11,7 @@ ln -s ${BUILD_DIR} $SNAP/openwebui
 PYTHON=$BUILD_DIR/bin/python
 $PYTHON --version
 $PYTHON -c "import ssl"
+$PYTHON -c "import en_core_web_sm; en_core_web_sm.load()"
 $PYTHON -m uvicorn --version
 
 $BUILD_DIR/bin/ffmpeg --help
