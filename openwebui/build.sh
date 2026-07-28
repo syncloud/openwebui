@@ -5,6 +5,8 @@ cd ${DIR}
 BUILD_DIR=${DIR}/../build/snap/openwebui
 mkdir -p ${BUILD_DIR}
 
+python -m spacy download en_core_web_sm
+
 cp -r /usr ${BUILD_DIR}
 cp -r /app ${BUILD_DIR}
 cp -r $DIR/bin ${BUILD_DIR}
